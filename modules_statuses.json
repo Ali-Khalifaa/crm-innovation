@@ -1,0 +1,12 @@
+{
+    "Plans": true,
+    "Subscriptions": true,
+    "Tenants": true,
+    "CrmAuth": true,
+    "Contacts": true,
+    "Deals": true,
+    "Tasks": true,
+    "Invoices": true,
+    "Reports": true,
+    "Core": true
+}

@@ -1,0 +1,30 @@
+{
+    "name": "nwidart/crmauth",
+    "description": "",
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\CrmAuth\\": "app/",
+            "Modules\\CrmAuth\\Database\\Factories\\": "database/factories/",
+            "Modules\\CrmAuth\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\CrmAuth\\Tests\\": "tests/"
+        }
+    }
+}

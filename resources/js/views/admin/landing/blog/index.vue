@@ -1,0 +1,100 @@
+<template>
+    <div>
+        <div class="d-md-flex d-block align-items-center justify-content-between my-4 page-header-breadcrumb">
+            <h1 class="page-title fw-semibold fs-18 mb-0">مقالات المدونة</h1>
+            <div class="ms-md-1 ms-0">
+                <nav><ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><router-link :to="{name:'dashboard'}">الرئيسية</router-link></li>
+                    <li class="breadcrumb-item"><span>صفحة الهبوط</span></li>
+                    <li class="breadcrumb-item active">المدونة</li>
+                </ol></nav>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xl-12">
+                <loader v-if="loading" />
+                <div class="card custom-card">
+                    <div class="card-header justify-content-between">
+                        <h6 class="card-title mb-0">قائمة المقالات</h6>
+                        <button v-if="permission.includes('landing blog create')"
+                            @click="showModelCreate" class="btn btn-sm btn-primary-light"
+                            data-bs-toggle="modal" data-bs-target="#blog-modal">
+                            <i class="ri-add-line me-1 fw-semibold align-middle"></i>إضافة مقال
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive mb-2">
+                            <table class="table table-striped">
+                                <thead><tr>
+                                    <th style="width:40px">#</th>
+                                    <th style="width:80px">الصورة</th>
+                                    <th>العنوان (EN)</th>
+                                    <th>الكاتب</th>
+                                    <th style="width:110px">تاريخ النشر</th>
+                                    <th style="width:80px">الحالة</th>
+                                    <th style="width:100px">الإجراءات</th>
+                                </tr></thead>
+                                <tbody>
+                                    <tr v-if="!loading && items.length === 0">
+                                        <td colspan="7" class="text-center text-muted py-4">لا توجد بيانات</td>
+                                    </tr>
+                                    <tr v-for="(item, i) in items" :key="item.id">
+                                        <td>{{ i + 1 }}</td>
+                                        <td>
+                                            <img v-if="item.image" :src="'/upload/general/' + item.image"
+                                                alt="" style="width:70px;height:48px;border-radius:8px;object-fit:cover;">
+                                            <div v-else style="width:70px;height:48px;border-radius:8px;background:#E2E8F0;display:flex;align-items:center;justify-content:center;">
+                                                <i class="fas fa-newspaper text-muted"></i>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span :title="item.title_en">{{ item.title_en?.substring(0, 50) }}{{ item.title_en?.length > 50 ? '...' : '' }}</span>
+                                        </td>
+                                        <td>{{ item.author_name }}</td>
+                                        <td><small>{{ item.published_at ? item.published_at.substring(0, 10) : '—' }}</small></td>
+                                        <td>
+                                            <span :class="item.is_published ? 'badge bg-success-transparent' : 'badge bg-secondary-transparent'">
+                                                {{ item.is_published ? 'منشور' : 'مسودة' }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <button v-if="permission.includes('landing blog edit')"
+                                                class="btn btn-sm btn-warning-light me-1"
+                                                data-bs-toggle="modal" data-bs-target="#blog-modal"
+                                                @click="showModelUpdate(item)">
+                                                <i class="ri-edit-line"></i>
+                                            </button>
+                                            <button v-if="permission.includes('landing blog delete')"
+                                                class="btn btn-sm btn-danger-light"
+                                                @click="deleteItem(item.id)">
+                                                <i class="ri-delete-bin-line"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <pagination v-if="pageCount > 1" :pageCount="pageCount" :value="page" @input="changePage" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <ModalCreateAndUpdate :selectedItem="selectedItem" :uri="uri" @refresh="getItems" />
+    </div>
+</template>
+
+<script>
+import crud from '../../../../composable/crud_structure';
+import ModalCreateAndUpdate from './ModalCreateAndUpdate.vue';
+
+export default {
+    name: 'LandingBlogIndex',
+    components: { ModalCreateAndUpdate },
+    setup() {
+        const { uri, loading, items, page, pageCount, getItems, changePage, deleteItem, showModelCreate, showModelUpdate, selectedItem, permission } = crud();
+        uri.value = 'landing/blog';
+        getItems();
+        return { uri, loading, items, page, pageCount, getItems, changePage, deleteItem, showModelCreate, showModelUpdate, selectedItem, permission };
+    },
+};
+</script>

@@ -1,0 +1,11 @@
+{
+    "name": "CrmAuth",
+    "alias": "crmauth",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\CrmAuth\\Providers\\CrmAuthServiceProvider"
+    ],
+    "files": []
+}
