@@ -10,13 +10,15 @@ class LandingFaqResource extends JsonResource
     {
         return [
             'id'          => $this->id,
-            'question_en' => $this->question_en,
-            'question_ar' => $this->question_ar,
-            'answer_en'   => $this->answer_en,
-            'answer_ar'   => $this->answer_ar,
+            'question'    => $this->question,
+            'question_ar' => $this->question['ar'] ?? '',
+            'question_en' => $this->question['en'] ?? '',
+            'answer'      => $this->answer,
+            'answer_ar'   => $this->answer['ar'] ?? '',
+            'answer_en'   => $this->answer['en'] ?? '',
             'sort_order'  => $this->sort_order,
             'is_active'   => $this->is_active,
-            'created_at'  => $this->created_at,
+            'updated_at'  => $this->updated_at,
         ];
     }
 }

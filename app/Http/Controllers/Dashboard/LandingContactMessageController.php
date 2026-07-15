@@ -19,9 +19,28 @@ class LandingContactMessageController extends Controller implements HasMiddlewar
 
     public function index(Request $request) {
         $query = LandingContactMessage::orderByDesc('created_at');
-        if ($request->status) $query->where('status', $request->status);
-        $items = $query->paginate(15);
-        return responseJson(LandingContactMessageResource::collection($items), 'تم بنجاح', 200, getPaginates($items));
+
+        if ($request->status) {
+            $query->where('status', $request->status);
+        }
+
+        if ($search = trim((string) $request->search)) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('phone', 'like', "%{$search}%")
+                    ->orWhere('message', 'like', "%{$search}%");
+            });
+        }
+
+        $perPage = min(max((int) ($request->per_page ?: 15), 5), 100);
+        $items   = $query->paginate($perPage);
+
+        $pagination = getPaginates($items);
+        $pagination['total_all'] = LandingContactMessage::count();
+        $pagination['total_new'] = LandingContactMessage::where('status', 'new')->count();
+
+        return responseJson(LandingContactMessageResource::collection($items->items()), 'تم بنجاح', 200, $pagination);
     }
 
     public function show(LandingContactMessage $landingContactMessage) {

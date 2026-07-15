@@ -1,0 +1,18 @@
+   <footer class="footer-area bg-black bg-cover">
+         <div class="container">
+            <div class="footer-bottom py-4">
+               <div class="row">
+                  <div class="col-md-6 align-self-center">
+                     <p class="mb-0">© 2026 AgileTech CRM. جميع الحقوق محفوظة.</p>
+                  </div>
+                  <div class="col-md-6 text-lg-end">
+                     <nav class="footer-auth-nav" aria-label="روابط سريعة">
+                        <a href="crm-saas.html"><i class="fas fa-home"></i><span>الرئيسية</span></a>
+                        <a href="register.html"><i class="fas fa-user-plus"></i><span>إنشاء حساب</span></a>
+                        <a href="crm-saas.html#contact"><i class="fas fa-envelope"></i><span>تواصل معنا</span></a>
+                     </nav>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </footer>

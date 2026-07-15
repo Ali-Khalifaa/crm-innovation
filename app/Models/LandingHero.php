@@ -12,13 +12,22 @@ class LandingHero extends Model
     protected $table = 'landing_hero';
 
     protected $fillable = [
-        'title_en', 'title_ar',
-        'subtitle_en', 'subtitle_ar',
-        'description_en', 'description_ar',
-        'btn_primary_text_en', 'btn_primary_text_ar', 'btn_primary_url',
-        'btn_secondary_text_en', 'btn_secondary_text_ar', 'btn_secondary_url',
-        'image', 'is_active',
+        'subtitle',
+        'headline',
+        'description',
+        'btn_primary',
+        'btn_secondary',
+        'bg_image',
+        'bg_overlay_image',
+        'is_active',
     ];
 
-    protected $casts = ['is_active' => 'boolean'];
+    protected $casts = [
+        'subtitle'      => 'array',
+        'headline'      => 'array',
+        'description'   => 'array',
+        'btn_primary'   => 'array',
+        'btn_secondary' => 'array',
+        'is_active'     => 'boolean',
+    ];
 }

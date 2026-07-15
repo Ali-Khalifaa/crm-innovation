@@ -2,75 +2,136 @@
 
 namespace Database\Seeders;
 
-use App\Models\LandingFeature;
+use App\Models\LandingFeatureItem;
+use App\Models\LandingFeatureSection;
 use Illuminate\Database\Seeder;
 
 class LandingFeatureSeeder extends Seeder
 {
     public function run(): void
     {
+        LandingFeatureSection::query()->delete();
+
+        LandingFeatureSection::create([
+            'subtitle' => [
+                'ar' => 'ميزات النظام',
+                'en' => 'System Features',
+            ],
+            'headline' => [
+                ['title' => ['ar' => 'كل ما ', 'en' => 'Everything '], 'check' => 0],
+                ['title' => ['ar' => 'تحتاجه', 'en' => 'You Need'], 'check' => 1],
+                ['title' => ['ar' => ' لإدارة ', 'en' => ' to Manage '], 'check' => 0],
+                ['title' => ['ar' => 'أعمالك', 'en' => 'Your Business'], 'check' => 1],
+            ],
+            'is_active' => true,
+        ]);
+
+        LandingFeatureItem::query()->delete();
+
         $features = [
             [
-                'icon'           => 'fa-address-book',
-                'title_en'       => 'Contact Management',
-                'title_ar'       => 'إدارة جهات الاتصال',
-                'description_en' => 'Organize all your contacts, leads, and customers in one powerful database with smart filtering and search.',
-                'description_ar' => 'نظّم جميع جهات اتصالك والعملاء المحتملين في قاعدة بيانات واحدة بحث وتصفية ذكية.',
-                'sort_order'     => 1,
-                'is_active'      => true,
+                'title' => ['ar' => 'إدارة العملاء', 'en' => 'Customer Management'],
+                'description' => [
+                    'ar' => 'إدارة كاملة لبيانات العملاء وتاريخ تعاملاتهم.',
+                    'en' => 'Complete management of customer data and interaction history.',
+                ],
+                'sort_order' => 1,
             ],
             [
-                'icon'           => 'fa-funnel-dollar',
-                'title_en'       => 'Deal Pipeline',
-                'title_ar'       => 'خط الصفقات',
-                'description_en' => 'Visualize your sales funnel with a Kanban board. Drag & drop deals through stages and never miss an opportunity.',
-                'description_ar' => 'تصوّر مسار مبيعاتك بلوحة Kanban. اسحب الصفقات عبر المراحل ولا تفوّت أي فرصة.',
-                'sort_order'     => 2,
-                'is_active'      => true,
+                'title' => ['ar' => 'إدارة العملاء المحتملين', 'en' => 'Lead Management'],
+                'description' => [
+                    'ar' => 'متابعة العملاء المحتملين وتحويلهم إلى عملاء فعليين.',
+                    'en' => 'Track leads and convert them into active customers.',
+                ],
+                'sort_order' => 2,
             ],
             [
-                'icon'           => 'fa-tasks',
-                'title_en'       => 'Task Management',
-                'title_ar'       => 'إدارة المهام',
-                'description_en' => 'Create tasks linked to contacts or deals, set priorities, assign to team members, and track completion.',
-                'description_ar' => 'أنشئ مهاماً مرتبطة بجهات الاتصال أو الصفقات، حدد الأولويات، عيّن الفريق وتابع الإنجاز.',
-                'sort_order'     => 3,
-                'is_active'      => true,
+                'title' => ['ar' => 'إدارة المبيعات', 'en' => 'Sales Management'],
+                'description' => [
+                    'ar' => 'متابعة عملية البيع من البداية حتى الإغلاق.',
+                    'en' => 'Track the sales process from start to close.',
+                ],
+                'sort_order' => 3,
             ],
             [
-                'icon'           => 'fa-file-invoice-dollar',
-                'title_en'       => 'Invoicing',
-                'title_ar'       => 'الفواتير',
-                'description_en' => 'Create professional invoices, add line items, apply taxes and discounts, and export to PDF in one click.',
-                'description_ar' => 'أنشئ فواتير احترافية، أضف بنوداً، طبّق الضرائب والخصومات، وصدّرها PDF بنقرة واحدة.',
-                'sort_order'     => 4,
-                'is_active'      => true,
+                'title' => ['ar' => 'الفواتير', 'en' => 'Invoicing'],
+                'description' => [
+                    'ar' => 'إنشاء وإدارة الفواتير الإلكترونية بسهولة.',
+                    'en' => 'Create and manage electronic invoices with ease.',
+                ],
+                'sort_order' => 4,
             ],
             [
-                'icon'           => 'fa-chart-line',
-                'title_en'       => 'Reports & Analytics',
-                'title_ar'       => 'التقارير والتحليلات',
-                'description_en' => 'Get real-time insights into your sales performance, revenue trends, and team productivity with visual dashboards.',
-                'description_ar' => 'احصل على رؤى فورية حول أداء مبيعاتك واتجاهات الإيرادات وإنتاجية الفريق.',
-                'sort_order'     => 5,
-                'is_active'      => true,
+                'title' => ['ar' => 'المهام', 'en' => 'Tasks'],
+                'description' => [
+                    'ar' => 'إنشاء وتعيين المهام لموظفينك ومتابعة تنفيذها.',
+                    'en' => 'Create and assign tasks to your team and track completion.',
+                ],
+                'sort_order' => 5,
             ],
             [
-                'icon'           => 'fa-users',
-                'title_en'       => 'Team Collaboration',
-                'title_ar'       => 'التعاون الجماعي',
-                'description_en' => 'Invite team members, assign roles and permissions, and work together seamlessly within your workspace.',
-                'description_ar' => 'ادعُ أعضاء الفريق، حدد الأدوار والصلاحيات، واعملوا معاً بكفاءة في مساحة عملكم.',
-                'sort_order'     => 6,
-                'is_active'      => true,
+                'title' => ['ar' => 'التقارير', 'en' => 'Reports'],
+                'description' => [
+                    'ar' => 'توليد تقارير شاملة عن أداء أعمالك.',
+                    'en' => 'Generate comprehensive reports on your business performance.',
+                ],
+                'sort_order' => 6,
+            ],
+            [
+                'title' => ['ar' => 'الإشعارات', 'en' => 'Notifications'],
+                'description' => [
+                    'ar' => 'إشعارات فورية بالمهام والمواعيد الهامة.',
+                    'en' => 'Instant notifications for important tasks and appointments.',
+                ],
+                'sort_order' => 7,
+            ],
+            [
+                'title' => ['ar' => 'إدارة الموظفين', 'en' => 'Employee Management'],
+                'description' => [
+                    'ar' => 'إدارة بيانات الموظفين وصلاحياتهم.',
+                    'en' => 'Manage employee data and their permissions.',
+                ],
+                'sort_order' => 8,
+            ],
+            [
+                'title' => ['ar' => 'الصلاحيات', 'en' => 'Permissions'],
+                'description' => [
+                    'ar' => 'تعيين صلاحيات مختلفة للموظفين حسب أدوارهم.',
+                    'en' => 'Assign different permissions to employees based on their roles.',
+                ],
+                'sort_order' => 9,
+            ],
+            [
+                'title' => ['ar' => 'Multi-Tenant', 'en' => 'Multi-Tenant'],
+                'description' => [
+                    'ar' => 'دعم متعدد الشركات في نظام واحد.',
+                    'en' => 'Support multiple companies in a single system.',
+                ],
+                'sort_order' => 10,
+            ],
+            [
+                'title' => ['ar' => 'API', 'en' => 'API'],
+                'description' => [
+                    'ar' => 'تكامل مع الأنظمة الأخرى من خلال واجهة برمجة التطبيقات.',
+                    'en' => 'Integrate with other systems through the application programming interface.',
+                ],
+                'sort_order' => 11,
+            ],
+            [
+                'title' => ['ar' => 'Automation', 'en' => 'Automation'],
+                'description' => [
+                    'ar' => 'أتمتة العمليات التجارية لتوفير الوقت والجهد.',
+                    'en' => 'Automate business processes to save time and effort.',
+                ],
+                'sort_order' => 12,
             ],
         ];
 
         foreach ($features as $feature) {
-            LandingFeature::firstOrCreate(
-                ['title_en' => $feature['title_en']],
-                $feature
-            );
+            LandingFeatureItem::create(array_merge($feature, [
+                'image'     => null,
+                'is_active' => true,
+            ]));
         }
     }
 }

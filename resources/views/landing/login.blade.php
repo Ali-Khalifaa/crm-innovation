@@ -1,110 +1,55 @@
-@extends('landing.layout')
-
-@section('title', app()->getLocale() === 'ar'
-    ? 'تسجيل الدخول — CRM Innovation'
-    : 'Sign In — CRM Innovation')
-@section('body-class', '')
+@extends('landing.layouts.Auth.master')
 
 @section('content')
-
-<div style="background:#F8FAFC;min-height:calc(100vh - 80px);padding:80px 0;">
+<section class="auth-area">
     <div class="container">
-        <div class="crm-auth-card wow animated fadeInUp" data-wow-duration="0.6s">
-            <div class="text-center mb-4">
-                <img src="{{ asset('images/logo.png') }}" alt="CRM Innovation" style="max-height:50px;margin-bottom:16px;">
-                <h3 style="font-weight:700;color:#1E293B;">{{ __('crm.login_title') }}</h3>
-                <p class="text-muted">{{ __('crm.login_subtitle') }}</p>
-            </div>
-
-            <div id="alert-box" class="alert d-none mb-3" role="alert"></div>
-
-            <form id="login-form">
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">{{ __('crm.login_email_label') }}</label>
-                    <input type="email" class="form-control" id="email"
-                        placeholder="{{ app()->getLocale() === 'ar' ? 'you@company.com' : 'you@company.com' }}"
-                        required
-                        value="{{ config('app.env') === 'local' ? 'demo@crm-innovation.com' : '' }}">
+       <div class="auth-wrap wow animated fadeInUp" data-wow-duration="0.8s">
+          <div class="auth-brand">
+             <a href="{{ route('landing') }}" class="auth-brand-logo">
+                <img src="{{ $landingLogo }}" alt="{{ $landingSiteName }}">
+             </a>
+             <h3>{{ __('crm.login_title') }}</h3>
+             <p>{{ __('crm.login_brand_desc') }}</p>
+             <ul class="auth-benefits">
+                <li><i class="fas fa-check"></i> {{ __('crm.login_benefit_dashboard') }}</li>
+                <li><i class="fas fa-check"></i> {{ __('crm.login_benefit_reports') }}</li>
+                <li><i class="fas fa-check"></i> {{ __('crm.login_benefit_support') }}</li>
+             </ul>
+          </div>
+          <div class="auth-form-side">
+             <h2>{{ __('crm.login_btn') }}</h2>
+             <p class="auth-subtitle">{{ __('crm.login_subtitle') }}</p>
+             <form id="landing-login-form"
+                action="{{ url('/api/crm/login') }}"
+                method="post"
+                class="auth-ajax-form"
+                data-auth-type="login"
+                data-redirect="{{ url('/crm/dashboard') }}"
+                data-loading="{{ __('crm.login_signing_in') }}"
+                data-network-error="{{ __('crm.login_network_error') }}">
+                <div class="single-input-inner style-border">
+                   <input type="email" name="email" placeholder="{{ __('crm.login_email_label') }}" required autocomplete="email">
                 </div>
-                <div class="mb-4">
-                    <label class="form-label fw-semibold">{{ __('crm.login_password_label') }}</label>
-                    <input type="password" class="form-control" id="password"
-                        placeholder="{{ app()->getLocale() === 'ar' ? 'كلمة المرور' : 'Your password' }}"
-                        required
-                        value="{{ config('app.env') === 'local' ? 'Demo@123456' : '' }}">
+                <div class="auth-field-error" data-for="email"></div>
+                <div class="single-input-inner style-border password-field">
+                   <button type="button" class="password-toggle" aria-label="{{ __('crm.login_show_password') }}">
+                      <i class="far fa-eye"></i>
+                   </button>
+                   <input type="password" name="password" placeholder="{{ __('crm.login_password_label') }}" required autocomplete="current-password">
                 </div>
-                <button type="submit" class="btn btn-base" id="submit-btn">
-                    <span id="btn-text">{{ __('crm.login_btn') }}</span>
-                    <span id="btn-spinner" class="d-none spinner-border spinner-border-sm ms-2"></span>
-                </button>
-            </form>
-
-            <hr class="my-4">
-            <p class="text-center text-muted mb-0" style="font-size:14px;">
-                {{ __('crm.login_no_account') }}
-                <a href="{{ route('register') }}" style="color:var(--crm-primary);font-weight:600;">
-                    {{ __('crm.login_start_trial_link') }}
-                </a>
-            </p>
-        </div>
+                <div class="auth-field-error" data-for="password"></div>
+                <div class="auth-meta">
+                   <label>
+                      <input type="checkbox" name="remember">
+                      {{ __('crm.login_remember_me') }}
+                   </label>
+                   <a href="#">{{ __('crm.login_forgot_password') }}</a>
+                </div>
+                <button type="submit" class="btn btn-base w-100 border-radius-5 auth-submit-btn">{{ __('crm.login_btn') }}</button>
+             </form>
+             <p class="auth-switch">{{ __('crm.login_no_account') }} <a href="{{ route('register') }}">{{ __('crm.login_start_trial_link') }}</a></p>
+          </div>
+       </div>
     </div>
-</div>
-
-@endsection
-
-@section('scripts')
-<script>
-const _loginBtnText   = @json(__('crm.login_btn'));
-const _loginSigningIn = @json(__('crm.login_signing_in'));
-const _errNetwork     = @json(app()->getLocale() === 'ar' ? 'خطأ في الشبكة. حاول مرة أخرى.' : 'Network error. Please try again.');
-
-document.getElementById('login-form').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    const btn      = document.getElementById('submit-btn');
-    const btnText  = document.getElementById('btn-text');
-    const spinner  = document.getElementById('btn-spinner');
-    const alertBox = document.getElementById('alert-box');
-
-    btn.disabled = true;
-    btnText.textContent = _loginSigningIn;
-    spinner.classList.remove('d-none');
-    alertBox.classList.add('d-none');
-
-    try {
-        const res = await fetch('/api/crm/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-            body: JSON.stringify({
-                email:    document.getElementById('email').value,
-                password: document.getElementById('password').value,
-            }),
-        });
-
-        const text  = await res.text();
-        const clean = text.replace(/^﻿+/, '');
-        let data;
-        try { data = JSON.parse(clean); }
-        catch (e) { throw new Error('Server error (HTTP ' + res.status + ')'); }
-
-        if (res.ok && data.success) {
-            try { localStorage.setItem('crm_token',  data.data.access_token); }      catch (e) {}
-            try { localStorage.setItem('crm_user',   JSON.stringify(data.data.user)); }   catch (e) {}
-            try { localStorage.setItem('crm_tenant', JSON.stringify(data.data.tenant)); } catch (e) {}
-            window.location.href = '/crm/dashboard';
-        } else {
-            alertBox.className = 'alert alert-danger mb-3';
-            alertBox.textContent = data.message || @json(app()->getLocale() === 'ar' ? 'بريد إلكتروني أو كلمة مرور غير صحيحة.' : 'Invalid email or password.');
-            alertBox.classList.remove('d-none');
-        }
-    } catch (err) {
-        alertBox.className = 'alert alert-danger mb-3';
-        alertBox.textContent = err.message || _errNetwork;
-        alertBox.classList.remove('d-none');
-    } finally {
-        btn.disabled = false;
-        btnText.textContent = _loginBtnText;
-        spinner.classList.add('d-none');
-    }
-});
-</script>
+ </section>
 @endsection

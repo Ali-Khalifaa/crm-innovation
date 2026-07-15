@@ -55,38 +55,53 @@
                             <li class="slide" v-if="permission.includes('landing settings read')">
                                 <router-link :to="{name:'landing.settings'}" class="side-menu__item">الإعدادات العامة</router-link>
                             </li>
+                            <li class="slide" v-if="permission.includes('landing seo read')">
+                                <router-link :to="{name:'landing.seo'}" class="side-menu__item">إعدادات SEO</router-link>
+                            </li>
                             <li class="slide" v-if="permission.includes('landing hero read')">
                                 <router-link :to="{name:'landing.hero'}" class="side-menu__item">قسم الهيرو</router-link>
-                            </li>
-                            <li class="slide" v-if="permission.includes('landing stat read')">
-                                <router-link :to="{name:'landing.stats'}" class="side-menu__item">الإحصاءات</router-link>
-                            </li>
-                            <li class="slide" v-if="permission.includes('landing feature read')">
-                                <router-link :to="{name:'landing.features'}" class="side-menu__item">المميزات</router-link>
-                            </li>
-                            <li class="slide" v-if="permission.includes('landing how it works read')">
-                                <router-link :to="{name:'landing.how_it_works'}" class="side-menu__item">كيف يعمل</router-link>
-                            </li>
-                            <li class="slide" v-if="permission.includes('landing faq read')">
-                                <router-link :to="{name:'landing.faqs'}" class="side-menu__item">الأسئلة الشائعة</router-link>
                             </li>
                             <li class="slide" v-if="permission.includes('landing partner read')">
                                 <router-link :to="{name:'landing.partners'}" class="side-menu__item">الشركاء والعملاء</router-link>
                             </li>
-                            <li class="slide" v-if="permission.includes('landing about read')">
-                                <router-link :to="{name:'landing.about'}" class="side-menu__item">من نحن</router-link>
+                            <li class="slide" v-if="permission.includes('landing problem read')">
+                                <router-link :to="{name:'landing.problems'}" class="side-menu__item">التحديات والمشاكل</router-link>
+                            </li>
+                            <li class="slide" v-if="permission.includes('landing feature read')">
+                                <router-link :to="{name:'landing.features'}" class="side-menu__item">المميزات</router-link>
+                            </li>
+                            <li class="slide" v-if="permission.includes('landing solutions read')">
+                                <router-link :to="{name:'landing.solutions'}" class="side-menu__item">معاينة لوحة التحكم</router-link>
+                            </li>
+                            <li class="slide" v-if="permission.includes('landing how it works read')">
+                                <router-link :to="{name:'landing.how_it_works'}" class="side-menu__item">كيف يعمل</router-link>
+                            </li>
+                            <li class="slide" v-if="permission.includes('landing why read')">
+                                <router-link :to="{name:'landing.why'}" class="side-menu__item">لماذا تختارنا</router-link>
+                            </li>
+                            <li class="slide" v-if="permission.includes('landing stat read')">
+                                <router-link :to="{name:'landing.stats'}" class="side-menu__item">الإحصاءات</router-link>
+                            </li>
+                            <li class="slide" v-if="permission.includes('landing faq read')">
+                                <router-link :to="{name:'landing.faqs'}" class="side-menu__item">الأسئلة الشائعة</router-link>
                             </li>
                             <li class="slide" v-if="permission.includes('landing testimonial read')">
                                 <router-link :to="{name:'landing.testimonials'}" class="side-menu__item">آراء العملاء</router-link>
                             </li>
-                            <li class="slide" v-if="permission.includes('landing team read')">
-                                <router-link :to="{name:'landing.team'}" class="side-menu__item">أعضاء الفريق</router-link>
-                            </li>
-                            <li class="slide" v-if="permission.includes('landing blog read')">
-                                <router-link :to="{name:'landing.blog'}" class="side-menu__item">المدونة</router-link>
+                            <li class="slide" v-if="permission.includes('landing contact read')">
+                                <router-link :to="{name:'landing.contact'}" class="side-menu__item">تواصل معنا</router-link>
                             </li>
                             <li class="slide" v-if="permission.includes('landing contact read')">
                                 <router-link :to="{name:'landing.contact_messages'}" class="side-menu__item">رسائل التواصل</router-link>
+                            </li>
+                            <li class="slide" v-if="permission.includes('landing newsletter read')">
+                                <router-link :to="{name:'landing.newsletter'}" class="side-menu__item">شريط الاشتراك</router-link>
+                            </li>
+                            <li class="slide" v-if="permission.includes('landing newsletter read')">
+                                <router-link :to="{name:'landing.newsletter_subscribers'}" class="side-menu__item">مشتركو النشرة</router-link>
+                            </li>
+                            <li class="slide" v-if="permission.includes('landing legal read')">
+                                <router-link :to="{name:'landing.legal_pages'}" class="side-menu__item">الصفحات القانونية</router-link>
                             </li>
                         </ul>
                     </li>
@@ -132,12 +147,12 @@ const route = useRoute();
 const { menu } = defaultrmenu();
 const permission = computed(() => store.getters['authAdmin/permission']);
 
-const landingRouteNames = ['landing.settings','landing.hero','landing.stats','landing.features','landing.how_it_works','landing.faqs','landing.partners','landing.about','landing.testimonials','landing.team','landing.blog','landing.contact_messages'];
+const landingRouteNames = ['landing.settings','landing.seo','landing.hero','landing.partners','landing.problems','landing.features','landing.solutions','landing.how_it_works','landing.why','landing.stats','landing.faqs','landing.testimonials','landing.contact','landing.contact_messages','landing.newsletter','landing.newsletter_subscribers','landing.legal_pages'];
 const isLandingActive = computed(() => landingRouteNames.includes(route.name));
 const hasAnyLandingPermission = computed(() =>
-    ['landing settings read','landing hero read','landing stat read',
-     'landing feature read','landing how it works read','landing faq read','landing partner read',
-     'landing about read','landing testimonial read','landing team read','landing blog read','landing contact read']
+    ['landing settings read','landing seo read','landing hero read','landing stat read',
+     'landing feature read','landing solutions read','landing how it works read','landing why read','landing faq read','landing partner read','landing problem read',
+     'landing testimonial read','landing contact read','landing newsletter read','landing legal read']
     .some(p => permission.value.includes(p))
 );
 

@@ -2,57 +2,65 @@
 
 namespace Database\Seeders;
 
-use App\Models\LandingStat;
+use App\Models\LandingStatItem;
+use App\Models\LandingStatSection;
 use Illuminate\Database\Seeder;
 
 class LandingStatSeeder extends Seeder
 {
     public function run(): void
     {
+        LandingStatSection::query()->delete();
+
+        LandingStatSection::create([
+            'subtitle' => [
+                'ar' => 'إحصائياتنا',
+                'en' => 'Our Statistics',
+            ],
+            'headline' => [
+                ['title' => ['ar' => 'أرقام ', 'en' => 'Numbers '], 'check' => 0],
+                ['title' => ['ar' => 'تحدث', 'en' => 'That Speak'], 'check' => 1],
+                ['title' => ['ar' => ' عن ', 'en' => ' of '], 'check' => 0],
+                ['title' => ['ar' => 'نجاحنا', 'en' => 'Our Success'], 'check' => 1],
+            ],
+            'bg_image'  => null,
+            'is_active' => true,
+        ]);
+
+        LandingStatItem::query()->delete();
+
         $stats = [
             [
-                'value_en'   => '2500',
-                'value_ar'   => '2500',
-                'suffix'     => '+',
-                'label_en'   => 'Active Users',
-                'label_ar'   => 'مستخدم نشط',
+                'value' => ['ar' => '10,000', 'en' => '10,000'],
+                'suffix'  => '+',
+                'label' => ['ar' => 'عدد العملاء', 'en' => 'Customers'],
                 'sort_order' => 1,
-                'is_active'  => true,
             ],
             [
-                'value_en'   => '98',
-                'value_ar'   => '98',
-                'suffix'     => '%',
-                'label_en'   => 'Customer Satisfaction',
-                'label_ar'   => 'رضا العملاء',
+                'value' => ['ar' => '5,000', 'en' => '5,000'],
+                'suffix'  => '+',
+                'label' => ['ar' => 'عدد الشركات', 'en' => 'Companies'],
                 'sort_order' => 2,
-                'is_active'  => true,
             ],
             [
-                'value_en'   => '1',
-                'value_ar'   => '1',
-                'suffix'     => 'M+',
-                'label_en'   => 'Contacts Managed',
-                'label_ar'   => 'جهة اتصال مُدارة',
+                'value' => ['ar' => '1M', 'en' => '1M'],
+                'suffix'  => '+',
+                'label' => ['ar' => 'عدد العمليات', 'en' => 'Operations'],
                 'sort_order' => 3,
-                'is_active'  => true,
             ],
             [
-                'value_en'   => '50',
-                'value_ar'   => '50',
-                'suffix'     => '+',
-                'label_en'   => 'Countries Worldwide',
-                'label_ar'   => 'دولة حول العالم',
+                'value' => ['ar' => '99.9', 'en' => '99.9'],
+                'suffix'  => '%',
+                'label' => ['ar' => 'نسبة الاستقرار', 'en' => 'Uptime Rate'],
                 'sort_order' => 4,
-                'is_active'  => true,
             ],
         ];
 
         foreach ($stats as $stat) {
-            LandingStat::firstOrCreate(
-                ['label_en' => $stat['label_en']],
-                $stat
-            );
+            LandingStatItem::create(array_merge($stat, [
+                'image'     => null,
+                'is_active' => true,
+            ]));
         }
     }
 }

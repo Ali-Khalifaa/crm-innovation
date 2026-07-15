@@ -37,8 +37,9 @@ class LandingPartnerController extends Controller implements HasMiddleware
 
     public function store(LandingPartnerRequest $request)
     {
-        $data          = $request->validated();
-        $data['image'] = store_single_image($request->file('image'), 'upload/general');
+        $data               = $request->validated();
+        $data['image']      = store_single_image($request->file('image'));
+        $data['is_active']  = $request->boolean('is_active');
 
         $partner = LandingPartner::create($data);
 
@@ -47,11 +48,12 @@ class LandingPartnerController extends Controller implements HasMiddleware
 
     public function update(LandingPartnerRequest $request, LandingPartner $partner)
     {
-        $data = $request->validated();
+        $data              = $request->validated();
+        $data['is_active'] = $request->boolean('is_active');
 
         if ($request->hasFile('image')) {
-            unlink_image_by_path($partner->image ? 'upload/general/' . $partner->image : null);
-            $data['image'] = store_single_image($request->file('image'), 'upload/general');
+            unlink_image_by_path($partner->image);
+            $data['image'] = store_single_image($request->file('image'));
         } else {
             unset($data['image']);
         }
@@ -63,7 +65,7 @@ class LandingPartnerController extends Controller implements HasMiddleware
 
     public function destroy(LandingPartner $partner)
     {
-        unlink_image_by_path($partner->image ? 'upload/general/' . $partner->image : null);
+        unlink_image_by_path($partner->image);
         $partner->delete();
 
         return responseJson(null, 'تم الحذف بنجاح');

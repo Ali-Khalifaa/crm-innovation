@@ -26,6 +26,7 @@ class RegisterService
                 'name'          => $data['company_name'],
                 'slug'          => $this->generateSlug($data['company_name']),
                 'email'         => $data['email'],
+                'phone'         => $data['phone'] ?? null,
                 'plan_id'       => $plan->id,
                 'billing_cycle' => $data['billing_cycle'],
                 'status'        => 'trial',
@@ -36,7 +37,7 @@ class RegisterService
             // 2. Create Owner User
             $user = User::create([
                 'tenant_id' => $tenant->id,
-                'name'      => $data['company_name'],
+                'name'      => $data['name'],
                 'email'     => $data['email'],
                 'password'  => Hash::make($data['password']),
                 'role'      => 'owner',
