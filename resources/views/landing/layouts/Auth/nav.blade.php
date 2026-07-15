@@ -20,7 +20,7 @@
              @if (Route::is('login'))
                 <a href="{{ route('register') }}" class="header-auth-link"><i class="fas fa-user-plus"></i><span>{{ __('crm.footer_register_link') }}</span></a>
              @endif
-             <a href="{{ route('landing') }}#contact" class="header-auth-link"><i class="fas fa-envelope"></i><span>{{ __('crm.nav_contact') }}</span></a>
+             <a href="{{ landing_section_url('contact') }}" class="header-auth-link"><i class="fas fa-envelope"></i><span>{{ __('crm.nav_contact') }}</span></a>
              <a href="{{ route('lang.switch', app()->getLocale() == 'ar' ? 'en' : 'ar') }}" class="lang-switch-link" hreflang="{{ app()->getLocale() == 'ar' ? 'en' : 'ar' }}" lang="{{ app()->getLocale() == 'ar' ? 'en' : 'ar' }}" title="{{ __('crm.auth_switch_lang_title') }}">
                 <i class="fas fa-globe"></i>
                 <span>{{ app()->getLocale() == 'ar' ? __('crm.lang_en') : __('crm.lang_ar') }}</span>

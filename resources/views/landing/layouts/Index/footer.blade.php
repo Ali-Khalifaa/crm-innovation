@@ -69,12 +69,12 @@
                 <div class="widget widget_nav_menu wow animated fadeInUp" data-wow-duration="0.8s" data-wow-delay="0.3s">
                     <h4 class="widget-title">{{ __('crm.footer_quick_links') }}</h4>
                     <ul>
-                        <li><a href="#hero"><i class="fas fa-arrow-left"></i> {{ __('crm.nav_home') }}</a></li>
-                        <li><a href="#features"><i class="fas fa-arrow-left"></i> {{ __('crm.nav_features') }}</a></li>
-                        <li><a href="#pricing"><i class="fas fa-arrow-left"></i> {{ __('crm.nav_pricing') }}</a></li>
-                        <li><a href="#faq"><i class="fas fa-arrow-left"></i> {{ __('crm.nav_faq') }}</a></li>
-                        <li><a href="#testimonials"><i class="fas fa-arrow-left"></i> {{ __('crm.nav_testimonials') }}</a></li>
-                        <li><a href="#contact"><i class="fas fa-arrow-left"></i> {{ __('crm.nav_contact') }}</a></li>
+                        <li><a href="{{ landing_section_url('hero') }}"><i class="fas fa-arrow-left"></i> {{ __('crm.nav_home') }}</a></li>
+                        <li><a href="{{ landing_section_url('features') }}"><i class="fas fa-arrow-left"></i> {{ __('crm.nav_features') }}</a></li>
+                        <li><a href="{{ landing_section_url('pricing') }}"><i class="fas fa-arrow-left"></i> {{ __('crm.nav_pricing') }}</a></li>
+                        <li><a href="{{ landing_section_url('faq') }}"><i class="fas fa-arrow-left"></i> {{ __('crm.nav_faq') }}</a></li>
+                        <li><a href="{{ landing_section_url('testimonials') }}"><i class="fas fa-arrow-left"></i> {{ __('crm.nav_testimonials') }}</a></li>
+                        <li><a href="{{ landing_section_url('contact') }}"><i class="fas fa-arrow-left"></i> {{ __('crm.nav_contact') }}</a></li>
                     </ul>
                 </div>
             </div>
@@ -100,7 +100,7 @@
                 <div class="col-md-6 text-lg-end">
                     <a href="{{ route('landing.terms') }}">{{ __('crm.footer_terms_link') }}</a>
                     <a href="{{ route('landing.privacy') }}">{{ __('crm.footer_privacy_link') }}</a>
-                    <a href="#contact">{{ __('crm.footer_contact_link') }}</a>
+                    <a href="{{ landing_section_url('contact') }}">{{ __('crm.footer_contact_link') }}</a>
                 </div>
             </div>
         </div>

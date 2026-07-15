@@ -13,12 +13,12 @@
         </div>
         <div class="collapse navbar-collapse" id="itech_main_menu">
             <ul class="navbar-nav menu-open">
-                <li><a href="#hero">{{ __('crm.nav_home') }}</a></li>
-                <li><a href="#features">{{ __('crm.nav_features') }}</a></li>
-                <li><a href="#solutions">{{ __('crm.nav_solutions') }}</a></li>
-                <li><a href="#pricing">{{ __('crm.nav_pricing') }}</a></li>
-                <li><a href="#faq">{{ __('crm.nav_faq') }}</a></li>
-                <li><a href="#contact">{{ __('crm.nav_contact') }}</a></li>
+                <li><a href="{{ landing_section_url('hero') }}">{{ __('crm.nav_home') }}</a></li>
+                <li><a href="{{ landing_section_url('features') }}">{{ __('crm.nav_features') }}</a></li>
+                <li><a href="{{ landing_section_url('solutions') }}">{{ __('crm.nav_solutions') }}</a></li>
+                <li><a href="{{ landing_section_url('pricing') }}">{{ __('crm.nav_pricing') }}</a></li>
+                <li><a href="{{ landing_section_url('faq') }}">{{ __('crm.nav_faq') }}</a></li>
+                <li><a href="{{ landing_section_url('contact') }}">{{ __('crm.nav_contact') }}</a></li>
                 <li class="d-lg-none lang-switch-item">
                     <a href="{{ route('lang.switch', app()->getLocale() == 'ar' ? 'en' : 'ar') }}" class="lang-switch-link" hreflang="en" lang="en" title="Switch language">
                         <i class="fas fa-globe"></i>
