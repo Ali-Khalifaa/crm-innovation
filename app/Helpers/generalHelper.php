@@ -292,4 +292,16 @@ function getCurrencyRate($firstCurrency, $secondCurrency){
     return $response['rates'][$secondCurrency];
 }
 
+/**
+ * Landing page section link — same-page anchor on home, full URL elsewhere.
+ */
+function landing_section_url(string $section): string
+{
+    $url = request()->routeIs('landing')
+        ? '#' . $section
+        : route('landing') . '#' . $section;
+
+    return $url;
+}
+
 
