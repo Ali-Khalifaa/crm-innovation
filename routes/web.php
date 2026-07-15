@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\LandingContactController;
+use App\Http\Controllers\LandingNewsletterController;
 use App\Http\Middleware\SetLandingLocale;
 use Illuminate\Support\Facades\Route;
 
@@ -21,7 +22,10 @@ Route::middleware(SetLandingLocale::class)->group(function () {
     Route::get('/pricing', [LandingController::class, 'pricing'])->name('pricing');
     Route::get('/register', [LandingController::class, 'register'])->name('register');
     Route::get('/login', [LandingController::class, 'login'])->name('login');
+    Route::get('/privacy', [LandingController::class, 'privacy'])->name('landing.privacy');
+    Route::get('/terms', [LandingController::class, 'terms'])->name('landing.terms');
     Route::post('/contact', [LandingContactController::class, 'send'])->name('contact.send');
+    Route::post('/newsletter/subscribe', [LandingNewsletterController::class, 'subscribe'])->name('newsletter.subscribe');
 });
 
 // =====================================================

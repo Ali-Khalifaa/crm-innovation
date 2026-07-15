@@ -13,10 +13,16 @@ class LandingPermissionSeeder extends Seeder
             // General Settings
             ['name' => 'landing settings read', 'category' => 'Landing Page'],
             ['name' => 'landing settings edit', 'category' => 'Landing Page'],
+            ['name' => 'landing seo read', 'category' => 'Landing Page'],
+            ['name' => 'landing seo edit', 'category' => 'Landing Page'],
 
             // Hero Section
             ['name' => 'landing hero read', 'category' => 'Landing Page'],
             ['name' => 'landing hero edit', 'category' => 'Landing Page'],
+
+            // Problems Section
+            ['name' => 'landing problem read', 'category' => 'Landing Page'],
+            ['name' => 'landing problem edit', 'category' => 'Landing Page'],
 
             // Stats
             ['name' => 'landing stat read',   'category' => 'Landing Page'],
@@ -35,6 +41,14 @@ class LandingPermissionSeeder extends Seeder
             ['name' => 'landing how it works create', 'category' => 'Landing Page'],
             ['name' => 'landing how it works edit',   'category' => 'Landing Page'],
             ['name' => 'landing how it works delete', 'category' => 'Landing Page'],
+
+            // Why Us
+            ['name' => 'landing why read', 'category' => 'Landing Page'],
+            ['name' => 'landing why edit', 'category' => 'Landing Page'],
+
+            // Solutions
+            ['name' => 'landing solutions read', 'category' => 'Landing Page'],
+            ['name' => 'landing solutions edit', 'category' => 'Landing Page'],
 
             // FAQs
             ['name' => 'landing faq read',   'category' => 'Landing Page'],

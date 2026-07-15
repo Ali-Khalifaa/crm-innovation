@@ -31,10 +31,15 @@ class DatabaseSeeder extends Seeder
 
         // Landing Page Content
         $this->call(LandingSettingSeeder::class);
+        $this->call(LandingSeoSeeder::class);
         $this->call(LandingHeroSeeder::class);
+        $this->call(LandingProblemSeeder::class);
         $this->call(LandingStatSeeder::class);
         $this->call(LandingFeatureSeeder::class);
         $this->call(LandingHowItWorkSeeder::class);
+        $this->call(LandingWhySeeder::class);
         $this->call(LandingFaqSeeder::class);
+        $this->call(LandingSolutionSeeder::class);
+        $this->call(LandingTestimonialSeeder::class);
     }
 }

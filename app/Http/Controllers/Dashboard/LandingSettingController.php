@@ -22,13 +22,28 @@ class LandingSettingController extends Controller implements HasMiddleware
     public function show()
     {
         $setting = LandingSetting::firstOrCreate([]);
+
         return responseJson(new LandingSettingResource($setting), 'Data retrieved successfully', 200);
     }
 
     public function update(LandingSettingRequest $request)
     {
         $setting = LandingSetting::firstOrCreate([]);
-        $setting->update($request->validated());
+        $data    = $request->validated();
+
+        foreach (['logo', 'logo_footer', 'favicon'] as $imageField) {
+            if ($request->hasFile($imageField)) {
+                if ($setting->{$imageField}) {
+                    unlink_image_by_path($setting->{$imageField});
+                }
+                $data[$imageField] = store_single_image($request->file($imageField));
+            } else {
+                unset($data[$imageField]);
+            }
+        }
+
+        $setting->update($data);
+
         return responseJson(new LandingSettingResource($setting), 'Updated Successfully', 200);
     }
 }

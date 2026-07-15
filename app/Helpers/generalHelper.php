@@ -104,18 +104,53 @@ function store_single_image($file, $path = '')
     if(!$file || is_string($file)){
         return $file;
     }
-    $path = $path ? rtrim($path, '/') . '/' : '';
-    $image = time() . "-" . rand(0, 999999) . '.' . $file->getClientOriginalName();
-    $file->storeAs('general', $path . $image, 'general');
 
-    return $path . $image;
+    $path = $path ? rtrim($path, '/') . '/' : '';
+    $extension = strtolower($file->getClientOriginalExtension() ?: 'png');
+    $extension = preg_replace('/[^a-z0-9]/', '', $extension) ?: 'png';
+    $filename  = time() . '-' . random_int(100000, 999999) . '.' . $extension;
+
+    $directory = public_path('upload/general');
+    if (! File::isDirectory($directory)) {
+        File::makeDirectory($directory, 0755, true);
+    }
+
+    $file->move($directory, $filename);
+
+    return $path . $filename;
 }
 
 function unlink_image_by_path($image_path)
 {
-    if (File::exists(public_path("upload/general/$image_path")) && $image_path) {
-        unlink(public_path("upload/general/$image_path"));
+    $filename = upload_general_basename($image_path);
+
+    if ($filename && File::exists(public_path("upload/general/$filename"))) {
+        unlink(public_path("upload/general/$filename"));
     }
+}
+
+function upload_general_basename(?string $path): ?string
+{
+    if (! $path) {
+        return null;
+    }
+
+    $path = str_replace('\\', '/', trim($path));
+
+    return preg_replace('#^upload/general/#', '', $path) ?: null;
+}
+
+function upload_general_url(?string $path): ?string
+{
+    $filename = upload_general_basename($path);
+
+    if (! $filename) {
+        return null;
+    }
+
+    $segments = array_map('rawurlencode', explode('/', $filename));
+
+    return '/upload/general/' . implode('/', $segments);
 }
 
 function default_image($type = '')

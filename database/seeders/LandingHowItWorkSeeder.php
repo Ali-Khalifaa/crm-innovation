@@ -2,51 +2,79 @@
 
 namespace Database\Seeders;
 
-use App\Models\LandingHowItWork;
+use App\Models\LandingHowItem;
+use App\Models\LandingHowSection;
 use Illuminate\Database\Seeder;
 
 class LandingHowItWorkSeeder extends Seeder
 {
     public function run(): void
     {
+        LandingHowSection::query()->delete();
+
+        LandingHowSection::create([
+            'subtitle' => [
+                'ar' => 'خطوات بسيطة',
+                'en' => 'Simple Steps',
+            ],
+            'headline' => [
+                ['title' => ['ar' => 'كيف ', 'en' => 'How to '], 'check' => 0],
+                ['title' => ['ar' => 'تبدأ', 'en' => 'Get Started'], 'check' => 1],
+                ['title' => ['ar' => ' استخدام النظام؟', 'en' => ' Using the System?'], 'check' => 0],
+            ],
+            'is_active' => true,
+        ]);
+
+        LandingHowItem::query()->delete();
+
         $steps = [
             [
-                'step_number'    => 1,
-                'image'          => null,
-                'title_en'       => 'Sign Up & Choose Your Plan',
-                'title_ar'       => 'سجّل واختر خطتك',
-                'description_en' => 'Create your account in seconds. Choose the plan that fits your business size and needs — no credit card required for the free trial.',
-                'description_ar' => 'أنشئ حسابك في ثوانٍ. اختر الخطة المناسبة لحجم عملك — لا بطاقة ائتمانية مطلوبة للتجربة المجانية.',
-                'sort_order'     => 1,
-                'is_active'      => true,
+                'title' => ['ar' => 'أنشئ حسابك', 'en' => 'Create Your Account'],
+                'description' => [
+                    'ar' => 'سجل في النظام للحصول على حساب مجاني. عملية التسجيل بسيطة وسريعة.',
+                    'en' => 'Sign up for a free account. Registration is simple and fast.',
+                ],
+                'sort_order' => 1,
             ],
             [
-                'step_number'    => 2,
-                'image'          => null,
-                'title_en'       => 'Import Your Contacts & Setup',
-                'title_ar'       => 'استورد جهات اتصالك وابدأ الإعداد',
-                'description_en' => 'Import your existing contacts, configure your deal stages to match your sales process, and invite your team members.',
-                'description_ar' => 'استورد جهات اتصالك الحالية، اضبط مراحل الصفقات لتناسب مسار مبيعاتك، وادعُ أعضاء فريقك.',
-                'sort_order'     => 2,
-                'is_active'      => true,
+                'title' => ['ar' => 'أضف فريق العمل', 'en' => 'Add Your Team'],
+                'description' => [
+                    'ar' => 'أضف موظفيك وتعيين صلاحياتهم المناسبة لكل منهم.',
+                    'en' => 'Add your employees and assign appropriate permissions to each.',
+                ],
+                'sort_order' => 2,
             ],
             [
-                'step_number'    => 3,
-                'image'          => null,
-                'title_en'       => 'Grow & Close More Deals',
-                'title_ar'       => 'نمّ أعمالك وأغلق المزيد من الصفقات',
-                'description_en' => 'Track every interaction, follow up on tasks, send invoices, and use data-driven reports to continuously improve your sales.',
-                'description_ar' => 'تتبّع كل تفاعل، تابع المهام، أرسل الفواتير، واستخدم التقارير لتحسين مبيعاتك باستمرار.',
-                'sort_order'     => 3,
-                'is_active'      => true,
+                'title' => ['ar' => 'استورد العملاء', 'en' => 'Import Customers'],
+                'description' => [
+                    'ar' => 'استورد بيانات عملائك الحالية أو أضف عملاء جديد.',
+                    'en' => 'Import your existing customer data or add new customers.',
+                ],
+                'sort_order' => 3,
+            ],
+            [
+                'title' => ['ar' => 'ابدأ إدارة أعمالك', 'en' => 'Start Managing Your Business'],
+                'description' => [
+                    'ar' => 'ابدأ في إدارة العملاء، المبيعات، المهام، والفواتير.',
+                    'en' => 'Start managing customers, sales, tasks, and invoices.',
+                ],
+                'sort_order' => 4,
+            ],
+            [
+                'title' => ['ar' => 'راقب التقارير', 'en' => 'Monitor Reports'],
+                'description' => [
+                    'ar' => 'راقب أداء أعمالك من خلال التقارير الشاملة.',
+                    'en' => 'Monitor your business performance through comprehensive reports.',
+                ],
+                'sort_order' => 5,
             ],
         ];
 
         foreach ($steps as $step) {
-            LandingHowItWork::firstOrCreate(
-                ['step_number' => $step['step_number']],
-                $step
-            );
+            LandingHowItem::create(array_merge($step, [
+                'image'     => null,
+                'is_active' => true,
+            ]));
         }
     }
 }
