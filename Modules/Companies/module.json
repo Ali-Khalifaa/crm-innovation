@@ -1,0 +1,12 @@
+{
+    "name": "Companies",
+    "alias": "companies",
+    "description": "Companies management for CRM tenants",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Companies\\Providers\\CompaniesServiceProvider"
+    ],
+    "aliases": {},
+    "files": []
+}

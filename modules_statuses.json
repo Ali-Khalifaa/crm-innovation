@@ -8,5 +8,6 @@
     "Tasks": true,
     "Invoices": true,
     "Reports": true,
-    "Core": true
+    "Core": true,
+    "Companies": true
 }

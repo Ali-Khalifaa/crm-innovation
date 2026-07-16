@@ -5,7 +5,9 @@ namespace Modules\Deals\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Modules\Core\Helpers\ApiResponse;
+use Modules\Deals\Http\Requests\DealStageRequest;
 use Modules\Deals\Http\Resources\DealStageResource;
 use Modules\Deals\Models\DealStage;
 
@@ -18,15 +20,9 @@ class DealStageController extends Controller
         return ApiResponse::success(DealStageResource::collection($stages));
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(DealStageRequest $request): JsonResponse
     {
-        $data = $request->validate([
-            'name'  => 'required|string|max:100',
-            'color' => 'nullable|string|max:20',
-            'order' => 'nullable|integer|min:0',
-        ]);
-
-        $stage = DealStage::create($data);
+        $stage = DealStage::create($request->validated());
 
         return ApiResponse::success(new DealStageResource($stage), __('crm.created'), 201);
     }
@@ -36,15 +32,9 @@ class DealStageController extends Controller
         return ApiResponse::success(new DealStageResource($dealStage));
     }
 
-    public function update(Request $request, DealStage $dealStage): JsonResponse
+    public function update(DealStageRequest $request, DealStage $dealStage): JsonResponse
     {
-        $data = $request->validate([
-            'name'  => 'sometimes|string|max:100',
-            'color' => 'nullable|string|max:20',
-            'order' => 'nullable|integer|min:0',
-        ]);
-
-        $dealStage->update($data);
+        $dealStage->update($request->validated());
 
         return ApiResponse::success(new DealStageResource($dealStage));
     }
@@ -58,5 +48,18 @@ class DealStageController extends Controller
         $dealStage->delete();
 
         return ApiResponse::success(null, __('crm.deleted'));
+    }
+
+    public function reorder(Request $request): JsonResponse
+    {
+        $request->validate(['stages' => 'required|array', 'stages.*.id' => 'required|integer', 'stages.*.order' => 'required|integer']);
+
+        DB::transaction(function () use ($request) {
+            foreach ($request->stages as $item) {
+                DealStage::where('id', $item['id'])->update(['order' => $item['order']]);
+            }
+        });
+
+        return ApiResponse::success(null, __('crm.updated'));
     }
 }

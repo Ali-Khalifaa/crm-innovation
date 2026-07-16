@@ -17,10 +17,12 @@ class Deal extends Model
         'tenant_id', 'title', 'contact_id', 'stage_id',
         'value', 'currency', 'probability', 'expected_close_date',
         'assigned_to', 'status', 'notes',
+        'lost_reason', 'closed_at', 'company_id',
     ];
 
     protected $casts = [
         'expected_close_date' => 'date',
+        'closed_at'           => 'datetime',
         'value'               => 'float',
     ];
 

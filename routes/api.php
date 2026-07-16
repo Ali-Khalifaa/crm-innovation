@@ -44,6 +44,13 @@ use Modules\Plans\Http\Controllers\PlanController;
 use Modules\Reports\Http\Controllers\ReportController;
 use Modules\Subscriptions\Http\Controllers\SubscriptionController;
 use Modules\Tasks\Http\Controllers\TaskController;
+use Modules\Companies\Http\Controllers\CompanyController;
+use Modules\Core\Http\Controllers\SearchController;
+use Modules\Core\Http\Controllers\NotificationController as CrmNotificationController;
+use Modules\Meetings\Http\Controllers\MeetingController;
+use Modules\Meetings\Http\Controllers\CallController;
+use Modules\Products\Http\Controllers\ProductController;
+use Modules\Invoices\Http\Controllers\InvoicePaymentController;
 use Modules\Tenants\Http\Controllers\TenantController;
 
 Route::get('/user', function (Request $request) {
@@ -74,31 +81,61 @@ Route::prefix('crm')->middleware(['auth:tenant_api', ChangeLang::class])->group(
     Route::get('subscription', [SubscriptionController::class, 'current']);
     Route::post('subscription/request-upgrade', [SubscriptionController::class, 'requestUpgrade']);
 
+    // Notifications
+    Route::get('notifications/unread-count', [CrmNotificationController::class, 'unreadCount']);
+    Route::put('notifications/read-all', [CrmNotificationController::class, 'markAllRead']);
+    Route::put('notifications/{notification}/read', [CrmNotificationController::class, 'markRead']);
+    Route::delete('notifications/{notification}', [CrmNotificationController::class, 'destroy']);
+    Route::get('notifications', [CrmNotificationController::class, 'index']);
+
     // CRM Resources
     Route::get('contacts/{contact}/activities', [\Modules\Contacts\Http\Controllers\ContactController::class, 'activities']);
+    Route::post('contacts/bulk', [ContactController::class, 'bulkAction']);
+    Route::post('contacts/import', [ContactController::class, 'import']);
     Route::apiResource('contacts', ContactController::class);
+    Route::post('deals/bulk', [DealController::class, 'bulkAction']);
     Route::apiResource('deals', DealController::class);
+    Route::put('deal-stages/reorder', [DealStageController::class, 'reorder']);
     Route::apiResource('deal-stages', DealStageController::class);
     Route::apiResource('tasks', TaskController::class);
     Route::apiResource('invoices', InvoiceController::class);
-    Route::patch('invoices/{invoice}/status', [\Modules\Invoices\Http\Controllers\InvoiceController::class, 'updateStatus']);
+    Route::patch('invoices/{invoice}/status', [InvoiceController::class, 'updateStatus']);
+    Route::post('invoices/{invoice}/send', [InvoiceController::class, 'send']);
+    Route::get('invoices/{invoice}/payments', [InvoicePaymentController::class, 'index']);
+    Route::post('invoices/{invoice}/payments', [InvoicePaymentController::class, 'store']);
+    Route::delete('invoices/{invoice}/payments/{payment}', [InvoicePaymentController::class, 'destroy']);
+
+    // Meetings & Calls
+    Route::apiResource('meetings', MeetingController::class);
+    Route::apiResource('calls', CallController::class)->only(['index', 'store', 'show', 'destroy']);
+
+    // Products
+    Route::get('products/dropdown', [ProductController::class, 'dropdown']);
+    Route::apiResource('products', ProductController::class);
+
+    // Companies
+    Route::get('companies/dropdown', [CompanyController::class, 'dropdown']);
+    Route::apiResource('companies', CompanyController::class);
 
     // Reports
     Route::get('reports/dashboard', [ReportController::class, 'dashboard']);
     Route::get('reports/deals', [ReportController::class, 'deals']);
     Route::get('reports/revenue', [ReportController::class, 'revenue']);
 
+    // Global Search
+    Route::get('search', [SearchController::class, 'search']);
+
     // Settings
     Route::get('settings/company', [SettingsController::class, 'company']);
     Route::put('settings/company', [SettingsController::class, 'updateCompany']);
     Route::get('settings/users', [SettingsController::class, 'users']);
     Route::post('settings/users', [SettingsController::class, 'inviteUser']);
+    Route::get('settings/profile', [SettingsController::class, 'profile']);
+    Route::put('settings/profile', [SettingsController::class, 'updateProfile']);
+    Route::put('settings/password', [SettingsController::class, 'updatePassword']);
 });
 
-// PDF route outside auth middleware (handles token via query string)
-Route::prefix('crm')->middleware([ChangeLang::class])->group(function () {
-    Route::get('invoices/{invoice}/pdf', [InvoiceController::class, 'generatePdf']);
-});
+// Note: PDF is served from the public CRM group above (token-based auth via ?token=)
 
 // =====================================================
 

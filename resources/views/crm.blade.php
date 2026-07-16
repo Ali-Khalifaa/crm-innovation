@@ -96,8 +96,21 @@
         }
 
         /* ─── 2. NAVBAR SEARCH input ──────────────────────────── */
+        /* Do NOT reverse the search input-group in RTL — it's a single unit */
+        [dir="rtl"] .navbar-search .input-group {
+            flex-direction: row !important;
+        }
+        /* Restore all 4 borders on the affix-wrapper (the generic row-reverse
+           rule can strip left/right borders via adjacent-child selectors) */
+        [dir="rtl"] .navbar-search .input-affix-wrapper.affix-border {
+            border: 1px solid var(--bs-border-color, rgba(0,0,0,.15)) !important;
+            border-left:  1px solid var(--bs-border-color, rgba(0,0,0,.15)) !important;
+            border-right: 1px solid var(--bs-border-color, rgba(0,0,0,.15)) !important;
+            border-radius: 0.5rem !important;
+        }
         [dir="rtl"] .navbar-search .input-affix-wrapper input {
-            direction: rtl; text-align: right;
+            direction: rtl;
+            text-align: right;
         }
 
         /* ─── 3. SIDEBAR NAV ITEMS ────────────────────────────── */
@@ -105,17 +118,27 @@
            (same as English). Arabic label text is forced RTL inside. */
         [dir="rtl"] .hk-menu .navbar-nav .nav-item .nav-link {
             direction: ltr !important;
+            /* Template RTL CSS flips padding-left→padding-right, leaving
+               the LEFT side with minimal space and clipping the icon.
+               Restore a proper left padding explicitly.                  */
+            padding-left:  1.1rem !important;
+            padding-right: 1.1rem !important;
+            overflow: hidden;
         }
         /* Arabic label: RTL text inside the LTR flex container */
         [dir="rtl"] .hk-menu .nav-link-text {
             direction: rtl !important;
             text-align: right;
             flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
         /* Icon margin: keep LTR original (gap to the RIGHT of icon) */
         [dir="rtl"] .hk-menu .nav-icon-wrap {
             margin-right: 0.875rem !important;
-            margin-left: 0 !important;
+            margin-left:  0          !important;
+            flex-shrink:  0;
         }
         /* Badge: push to the right end in LTR nav-link */
         [dir="rtl"] .hk-menu .nav-link .badge {
@@ -144,7 +167,20 @@
             transform: translateX(5px) !important;
         }
 
-        /* ─── 6. DROPDOWN MENUS ──────────────────────────────── */
+        /* ─── 6. MODALS & OFFCANVAS ─────────────────────────── */
+        /* Bootstrap .btn-close gets margin-left:auto which in RTL
+           pushes it physically RIGHT (toward the title).
+           Flip to margin-right:auto so it sits at the far LEFT.  */
+        [dir="rtl"] .modal-header .btn-close {
+            margin-left:  0    !important;
+            margin-right: auto !important;
+        }
+        [dir="rtl"] .offcanvas-header .btn-close {
+            margin-left:  0    !important;
+            margin-right: auto !important;
+        }
+
+        /* ─── 6b. DROPDOWN MENUS ─────────────────────────────── */
         [dir="rtl"] .dropdown-menu { direction: rtl; text-align: right; }
         [dir="rtl"] .dropdown-menu-end { left: 0 !important; right: auto !important; }
         [dir="rtl"] .dropdown-item { direction: rtl; text-align: right; }
@@ -258,10 +294,21 @@
             flex-direction: row;   /* keep natural RTL row flow */
         }
 
+        /* ─── 20. PRIMEVUE OVERLAYS (body-appended) ──────────────
+           Select panels and DatePicker panels are appended to <body>
+           and must sit above Bootstrap modal (z-index 1055).        */
+        .p-select-overlay,
+        .p-datepicker-panel {
+            z-index: 9999 !important;
+        }
+
     </style>
 </head>
 <body>
     <div id="crm-app"></div>
+
+    {{-- Bootstrap JS bundle (makes window.bootstrap available for modals/offcanvas) --}}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     {{-- Simplebar CDN (custom scrollbar for sidebar) --}}
     <script src="https://cdn.jsdelivr.net/npm/simplebar@6.2.7/dist/simplebar.min.js"></script>

@@ -4,6 +4,7 @@ namespace Modules\Contacts\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use Modules\Contacts\Exports\ContactsExport;
@@ -18,7 +19,9 @@ class ContactController extends Controller
 {
     public function index(): JsonResponse
     {
-        $query = Contact::query();
+        $this->authorize('viewAny', Contact::class);
+
+        $query = Contact::with(['creator', 'companyRecord']);
 
         if ($search = request('search')) {
             $query->where(function ($q) use ($search) {
@@ -34,6 +37,14 @@ class ContactController extends Controller
             $query->where('status', $status);
         }
 
+        if ($source = request('lead_source')) {
+            $query->where('lead_source', $source);
+        }
+
+        if ($companyId = request('company_id')) {
+            $query->where('company_id', $companyId);
+        }
+
         $contacts = $query->latest()->paginate(15);
 
         return ApiResponse::paginated($contacts, ContactResource::class);
@@ -41,6 +52,8 @@ class ContactController extends Controller
 
     public function store(StoreContactRequest $request): JsonResponse
     {
+        $this->authorize('create', Contact::class);
+
         $data = $request->validated();
         $data['created_by'] = Auth::guard('tenant_api')->id();
 
@@ -52,11 +65,23 @@ class ContactController extends Controller
 
     public function show(Contact $contact): JsonResponse
     {
+        $this->authorize('view', $contact);
+
+        $contact->load([
+            'creator',
+            'companyRecord',
+            'owner',
+            'deals.stage',
+            'tasks.assignee',
+        ]);
+
         return ApiResponse::success(new ContactResource($contact));
     }
 
     public function update(UpdateContactRequest $request, Contact $contact): JsonResponse
     {
+        $this->authorize('update', $contact);
+
         $contact->update($request->validated());
         CrmActivity::log('contact_updated', $contact, "Updated contact: {$contact->first_name} {$contact->last_name}");
 
@@ -65,15 +90,17 @@ class ContactController extends Controller
 
     public function destroy(Contact $contact): JsonResponse
     {
-        $name = $contact->first_name . ' ' . $contact->last_name;
+        $this->authorize('delete', $contact);
+
         $contact->delete();
-        // Note: activity logged before delete
 
         return ApiResponse::success(null, __('crm.deleted'));
     }
 
     public function activities(Contact $contact): JsonResponse
     {
+        $this->authorize('view', $contact);
+
         $activities = CrmActivity::with('user')
             ->where('subject_type', Contact::class)
             ->where('subject_id', $contact->id)
@@ -90,12 +117,60 @@ class ContactController extends Controller
         ]));
     }
 
-    public function export(\Illuminate\Http\Request $request)
+    public function bulkAction(Request $request): JsonResponse
+    {
+        $this->authorize('viewAny', Contact::class);
+
+        $request->validate([
+            'action' => 'required|in:delete,change_status',
+            'ids'    => 'required|array|min:1',
+            'ids.*'  => 'integer',
+            'status' => 'required_if:action,change_status|in:lead,customer,inactive',
+        ]);
+
+        $user = auth('tenant_api')->user();
+        $contacts = Contact::whereIn('id', $request->ids)
+            ->where('tenant_id', $user->tenant_id)
+            ->get();
+
+        $count = $contacts->count();
+
+        if ($request->action === 'delete') {
+            Contact::whereIn('id', $contacts->pluck('id'))->delete();
+            return ApiResponse::success(['affected' => $count], __('crm.bulk_deleted', ['count' => $count]));
+        }
+
+        if ($request->action === 'change_status') {
+            Contact::whereIn('id', $contacts->pluck('id'))->update(['status' => $request->status]);
+            return ApiResponse::success(['affected' => $count], __('crm.bulk_updated', ['count' => $count]));
+        }
+
+        return ApiResponse::error(__('crm.invalid_action'));
+    }
+
+    public function import(Request $request): JsonResponse
+    {
+        $request->validate(['file' => 'required|file|mimes:xlsx,xls,csv|max:5120']);
+
+        $user = auth('tenant_api')->user();
+        $import = new \Modules\Contacts\Imports\ContactImport($user->tenant_id, $user->id);
+        Excel::import($import, $request->file('file'));
+
+        $count = $import->getImportedCount();
+        $errors = $import->getErrors();
+
+        return ApiResponse::success(
+            ['imported' => $count, 'errors' => $errors],
+            __('crm.import_done', ['count' => $count])
+        );
+    }
+
+    public function export(Request $request)
     {
         if ($token = $request->query('token')) {
             try {
                 \Tymon\JWTAuth\Facades\JWTAuth::setToken($token)->authenticate();
-            } catch (\Exception $e) {
+            } catch (\Exception) {
                 abort(401);
             }
         }

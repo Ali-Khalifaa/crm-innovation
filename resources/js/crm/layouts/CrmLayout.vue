@@ -31,14 +31,21 @@
             <span class="icon"><i class="bi bi-layout-sidebar fs-4"></i></span>
           </button>
 
-          <!-- Search -->
+          <!-- Search trigger -->
           <div class="dropdown navbar-search ms-1">
-            <div class="input-group d-xl-flex d-none">
-              <span class="input-affix-wrapper input-search affix-border">
-                <input type="text" class="form-control bg-transparent" placeholder="Search..." />
-                <span class="input-suffix"><span>/</span></span>
+            <div class="input-group d-xl-flex d-none" @click="openGlobalSearch" style="cursor:pointer">
+              <span class="input-affix-wrapper input-search affix-border" style="pointer-events:none">
+                <i class="bi bi-search" style="color:#94A3B8;font-size:13px;margin-inline-end:6px"></i>
+                <span class="form-control bg-transparent text-muted" style="font-size:13px">
+                  {{ locale === 'ar' ? 'بحث سريع...' : 'Quick search...' }}
+                </span>
+                <span class="input-suffix" style="pointer-events:none"><kbd style="font-size:11px;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:4px;padding:1px 5px">Ctrl+K</kbd></span>
               </span>
             </div>
+            <!-- Mobile search icon -->
+            <button class="btn btn-icon btn-rounded btn-flush-dark flush-soft-hover d-xl-none" @click="openGlobalSearch" type="button">
+              <span class="icon"><i class="bi bi-search" style="font-size:1rem"></i></span>
+            </button>
           </div>
         </div>
         <!-- /Nav Start -->
@@ -77,69 +84,8 @@
             </li>
 
             <!-- Notifications -->
-            <li class="nav-item" ref="notifDropdownEl">
-              <button
-                class="btn btn-icon btn-rounded btn-flush-dark flush-soft-hover position-relative"
-                @click.stop="toggleNotif"
-                type="button"
-              >
-                <span class="icon">
-                  <i class="bi bi-bell" style="font-size:1rem;"></i>
-                  <span class="badge badge-success badge-indicator position-top-end-overflow-1"></span>
-                </span>
-              </button>
-              <!-- Notification Dropdown -->
-              <div
-                class="dropdown-menu dropdown-menu-end p-0"
-                :class="{ show: notifOpen }"
-                style="min-width:350px;"
-              >
-                <h6 class="dropdown-header px-4 fs-6">
-                  {{ trans('notifications.title') }}
-                  <button class="btn btn-icon btn-flush-dark btn-rounded flush-soft-hover" type="button">
-                    <span class="icon"><i class="bi bi-gear"></i></span>
-                  </button>
-                </h6>
-                <div class="dropdown-body p-2" style="max-height:300px;overflow-y:auto;">
-                  <a href="#" class="dropdown-item" @click.prevent>
-                    <div class="media">
-                      <div class="media-head">
-                        <div class="avatar avatar-icon avatar-sm avatar-soft-primary avatar-rounded">
-                          <span class="initial-wrap"><i class="bi bi-person-check"></i></span>
-                        </div>
-                      </div>
-                      <div class="media-body">
-                        <div class="notifications-text">Welcome to CRM Innovation!</div>
-                        <div class="notifications-info">
-                          <span class="badge badge-soft-success">System</span>
-                          <div class="notifications-time">Just now</div>
-                        </div>
-                      </div>
-                    </div>
-                  </a>
-                  <a href="#" class="dropdown-item" @click.prevent>
-                    <div class="media">
-                      <div class="media-head">
-                        <div class="avatar avatar-icon avatar-sm avatar-pink avatar-rounded">
-                          <span class="initial-wrap"><i class="bi bi-graph-up"></i></span>
-                        </div>
-                      </div>
-                      <div class="media-body">
-                        <div class="notifications-text">Check your pipeline — deals need attention</div>
-                        <div class="notifications-info">
-                          <span class="badge badge-soft-pink">Deals</span>
-                          <div class="notifications-time">Today</div>
-                        </div>
-                      </div>
-                    </div>
-                  </a>
-                </div>
-                <div class="dropdown-footer">
-                  <router-link to="/crm/reports" @click="notifOpen = false">
-                    <u>View all activity</u>
-                  </router-link>
-                </div>
-              </div>
+            <li class="nav-item">
+              <NotificationBell />
             </li>
 
             <!-- User Dropdown -->
@@ -176,6 +122,10 @@
                 <h6 class="dropdown-header">
                   <span class="badge badge-soft-primary me-1">{{ planName }}</span> Plan
                 </h6>
+                <router-link class="dropdown-item" to="/crm/settings/profile" @click="userOpen = false">
+                  <span class="dropdown-icon"><i class="bi bi-person-circle me-2"></i></span>
+                  {{ locale === 'ar' ? 'ملفي الشخصي' : 'My Profile' }}
+                </router-link>
                 <router-link class="dropdown-item" to="/crm/settings/company" @click="userOpen = false">
                   <span class="dropdown-icon"><i class="bi bi-gear me-2"></i></span>
                   {{ locale === 'ar' ? 'إعدادات الشركة' : 'Company Settings' }}
@@ -290,6 +240,29 @@
                 </router-link>
               </li>
 
+              <!-- Companies -->
+              <li class="nav-item" :class="{ active: route.path.startsWith('/crm/companies') }">
+                <router-link class="nav-link" to="/crm/companies">
+                  <span class="nav-icon-wrap">
+                    <span class="svg-icon">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M3 21l18 0"/>
+                        <path d="M9 8l1 0"/>
+                        <path d="M9 12l1 0"/>
+                        <path d="M9 16l1 0"/>
+                        <path d="M14 8l1 0"/>
+                        <path d="M14 12l1 0"/>
+                        <path d="M14 16l1 0"/>
+                        <path d="M5 21v-16a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v16"/>
+                      </svg>
+                    </span>
+                  </span>
+                  <span class="nav-link-text">{{ locale === 'ar' ? 'الشركات' : 'Companies' }}</span>
+                </router-link>
+              </li>
+
               <!-- Deals (with submenu) -->
               <li class="nav-item" :class="{ active: route.path.startsWith('/crm/deals') }">
                 <a
@@ -328,9 +301,9 @@
                 </ul>
               </li>
 
-              <!-- Tasks (no sub) -->
-              <li class="nav-item" :class="{ active: route.path.startsWith('/crm/tasks') }">
-                <router-link class="nav-link" to="/crm/tasks">
+              <!-- Tasks (with submenu) -->
+              <li class="nav-item has-sub" :class="{ active: route.path.startsWith('/crm/tasks'), 'menu-open': openMenus.tasks }">
+                <a class="nav-link" href="#" @click.prevent="toggleMenu('tasks')">
                   <span class="nav-icon-wrap">
                     <span class="svg-icon">
                       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
@@ -344,6 +317,57 @@
                     </span>
                   </span>
                   <span class="nav-link-text">{{ trans('nav.tasks') }}</span>
+                </a>
+                <ul class="nav flex-column nav-children" v-show="openMenus.tasks">
+                  <li class="nav-item"><ul class="nav flex-column">
+                    <li class="nav-item">
+                      <router-link class="nav-link" to="/crm/tasks">
+                        <span class="nav-link-text">{{ locale === 'ar' ? 'قائمة المهام' : 'Task List' }}</span>
+                      </router-link>
+                    </li>
+                    <li class="nav-item">
+                      <router-link class="nav-link" to="/crm/tasks/calendar">
+                        <span class="nav-link-text">{{ locale === 'ar' ? 'التقويم' : 'Calendar' }}</span>
+                      </router-link>
+                    </li>
+                  </ul></li>
+                </ul>
+              </li>
+
+              <!-- Meetings -->
+              <li class="nav-item" :class="{ active: route.path.startsWith('/crm/meetings') }">
+                <router-link class="nav-link" to="/crm/meetings">
+                  <span class="nav-icon-wrap">
+                    <span class="svg-icon">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                        <rect x="4" y="5" width="16" height="16" rx="2"/>
+                        <line x1="16" y1="3" x2="16" y2="7"/>
+                        <line x1="8" y1="3" x2="8" y2="7"/>
+                        <line x1="4" y1="11" x2="20" y2="11"/>
+                        <line x1="11" y1="15" x2="12" y2="15"/>
+                        <line x1="12" y1="15" x2="12" y2="18"/>
+                      </svg>
+                    </span>
+                  </span>
+                  <span class="nav-link-text">{{ locale === 'ar' ? 'الاجتماعات' : 'Meetings' }}</span>
+                </router-link>
+              </li>
+
+              <!-- Calls -->
+              <li class="nav-item" :class="{ active: route.path.startsWith('/crm/calls') }">
+                <router-link class="nav-link" to="/crm/calls">
+                  <span class="nav-icon-wrap">
+                    <span class="svg-icon">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M5 4h4l2 5l-2.5 1.5a11 11 0 0 0 5 5l1.5 -2.5l5 2v4a2 2 0 0 1 -2 2a16 16 0 0 1 -15 -15a2 2 0 0 1 2 -2"/>
+                      </svg>
+                    </span>
+                  </span>
+                  <span class="nav-link-text">{{ locale === 'ar' ? 'المكالمات' : 'Calls' }}</span>
                 </router-link>
               </li>
 
@@ -396,6 +420,25 @@
                 </ul>
               </li>
 
+              <!-- Products -->
+              <li class="nav-item" :class="{ active: route.path.startsWith('/crm/products') }">
+                <router-link class="nav-link" to="/crm/products">
+                  <span class="nav-icon-wrap">
+                    <span class="svg-icon">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                        <polyline points="12 3 20 7.5 20 16.5 12 21 4 16.5 4 7.5 12 3"/>
+                        <line x1="12" y1="12" x2="20" y2="7.5"/>
+                        <line x1="12" y1="12" x2="12" y2="21"/>
+                        <line x1="12" y1="12" x2="4" y2="7.5"/>
+                      </svg>
+                    </span>
+                  </span>
+                  <span class="nav-link-text">{{ locale === 'ar' ? 'المنتجات' : 'Products' }}</span>
+                </router-link>
+              </li>
+
               <!-- Reports (no sub) -->
               <li class="nav-item" :class="{ active: route.path.startsWith('/crm/reports') }">
                 <router-link class="nav-link" to="/crm/reports">
@@ -444,6 +487,11 @@
                 <ul class="nav flex-column nav-children" v-show="openMenus.settings">
                   <li class="nav-item"><ul class="nav flex-column">
                     <li class="nav-item">
+                      <router-link class="nav-link" to="/crm/settings/profile">
+                        <span class="nav-link-text">{{ locale === 'ar' ? 'ملفي الشخصي' : 'My Profile' }}</span>
+                      </router-link>
+                    </li>
+                    <li class="nav-item">
                       <router-link class="nav-link" to="/crm/settings/company">
                         <span class="nav-link-text">{{ trans('nav.company') }}</span>
                       </router-link>
@@ -451,6 +499,11 @@
                     <li class="nav-item">
                       <router-link class="nav-link" to="/crm/settings/team">
                         <span class="nav-link-text">{{ trans('nav.team') }}</span>
+                      </router-link>
+                    </li>
+                    <li class="nav-item">
+                      <router-link class="nav-link" to="/crm/settings/stages">
+                        <span class="nav-link-text">{{ locale === 'ar' ? 'مراحل الصفقات' : 'Deal Stages' }}</span>
                       </router-link>
                     </li>
                   </ul></li>
@@ -486,15 +539,15 @@
     ></div>
 
     <!-- ===================== MAIN CONTENT ===================== -->
-    <div class="hk-pg-wrapper">
-      <div class="container-xxl">
-        <div class="hk-pg-header pt-7">
+    <div class="hk-pg-wrapper pt-5">
+      <div class="container-xxl pt-2">
+        <!-- <div class="hk-pg-header pt-7">
           <div class="d-flex flex-wrap justify-content-between flex-1">
             <div class="mb-lg-0 mb-2">
               <h1 class="pg-title">{{ pageTitle }}</h1>
             </div>
           </div>
-        </div>
+        </div> -->
         <div class="hk-pg-body">
           <slot />
         </div>
@@ -503,6 +556,9 @@
     <!-- /Main Content -->
 
   </div>
+
+  <!-- Global Search -->
+  <GlobalSearch ref="globalSearchRef" />
 </template>
 
 <script setup>
@@ -510,6 +566,13 @@ import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router'
 import { loadLanguageAsync, trans } from 'laravel-vue-i18n'
+import GlobalSearch from '../components/GlobalSearch.vue'
+import NotificationBell from '../components/NotificationBell.vue'
+
+const globalSearchRef = ref(null)
+function openGlobalSearch() {
+  globalSearchRef.value?.openSearch()
+}
 
 const store  = useStore()
 const router = useRouter()
@@ -523,14 +586,13 @@ const mobileOpen       = ref(false)
 // ── Submenu open state (Vue-controlled, no Bootstrap collapse needed) ──
 const openMenus = reactive({
   deals:    route.path.startsWith('/crm/deals'),
+  tasks:    route.path.startsWith('/crm/tasks'),
   invoices: route.path.startsWith('/crm/invoices'),
   settings: route.path.startsWith('/crm/settings'),
 })
 
 // ── Navbar dropdown state ──────────────────────────────────
-const notifOpen       = ref(false)
 const userOpen        = ref(false)
-const notifDropdownEl = ref(null)
 const userDropdownEl  = ref(null)
 
 // ── Auth state ─────────────────────────────────────────────
@@ -551,11 +613,16 @@ const pageTitlesEn = {
   '/crm/deals':            'Deals',
   '/crm/deals/list':       'Deals List',
   '/crm/tasks':            'Tasks',
+  '/crm/tasks/calendar':  'Task Calendar',
   '/crm/invoices':         'Invoices',
   '/crm/invoices/create':  'Create Invoice',
   '/crm/reports':          'Reports',
   '/crm/settings/company': 'Company Settings',
   '/crm/settings/team':    'Team Management',
+  '/crm/settings/profile': 'My Profile',
+  '/crm/settings/stages':  'Deal Stages',
+  '/crm/notifications':    'Notifications',
+  '/crm/companies/:id':    'Company Profile',
 }
 const pageTitlesAr = {
   '/crm/dashboard':        'مرحباً بعودتك',
@@ -564,11 +631,16 @@ const pageTitlesAr = {
   '/crm/deals':            'الصفقات',
   '/crm/deals/list':       'قائمة الصفقات',
   '/crm/tasks':            'المهام',
+  '/crm/tasks/calendar':  'تقويم المهام',
   '/crm/invoices':         'الفواتير',
   '/crm/invoices/create':  'إنشاء فاتورة',
   '/crm/reports':          'التقارير',
   '/crm/settings/company': 'إعدادات الشركة',
   '/crm/settings/team':    'إدارة الفريق',
+  '/crm/settings/profile': 'ملفي الشخصي',
+  '/crm/settings/stages':  'مراحل الصفقات',
+  '/crm/notifications':    'الإشعارات',
+  '/crm/companies/:id':    'ملف الشركة',
 }
 const pageTitle = computed(() => {
   const titles = locale.value === 'ar' ? pageTitlesAr : pageTitlesEn
@@ -610,13 +682,11 @@ function toggleMenu(key) {
 }
 
 // ── Navbar dropdowns ───────────────────────────────────────
-function toggleNotif() { notifOpen.value = !notifOpen.value; userOpen.value = false }
-function toggleUser()  { userOpen.value  = !userOpen.value;  notifOpen.value = false }
+function toggleUser()  { userOpen.value = !userOpen.value }
 
 // Close dropdowns when clicking outside
 function onDocClick(e) {
-  if (notifDropdownEl.value && !notifDropdownEl.value.contains(e.target)) notifOpen.value = false
-  if (userDropdownEl.value  && !userDropdownEl.value.contains(e.target))  userOpen.value  = false
+  if (userDropdownEl.value && !userDropdownEl.value.contains(e.target)) userOpen.value = false
 }
 
 // ── Language toggle ────────────────────────────────────────
@@ -670,6 +740,7 @@ onMounted(async () => {
 // Auto-expand active submenu on route change
 const stopWatch = router.afterEach((to) => {
   if (to.path.startsWith('/crm/deals'))    openMenus.deals    = true
+  if (to.path.startsWith('/crm/tasks'))    openMenus.tasks    = true
   if (to.path.startsWith('/crm/invoices')) openMenus.invoices = true
   if (to.path.startsWith('/crm/settings')) openMenus.settings = true
   // Close mobile sidebar on navigation

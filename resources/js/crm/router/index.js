@@ -17,12 +17,7 @@ const routes = [
         component: () => import('../views/contacts/Index.vue'),
         meta: { auth: true },
     },
-    {
-        path: '/crm/contacts/create',
-        name: 'crm.contacts.create',
-        component: () => import('../views/contacts/Form.vue'),
-        meta: { auth: true },
-    },
+    { path: '/crm/contacts/create', redirect: '/crm/contacts' },
     {
         path: '/crm/contacts/:id',
         name: 'crm.contacts.show',
@@ -32,7 +27,18 @@ const routes = [
     {
         path: '/crm/contacts/:id/edit',
         name: 'crm.contacts.edit',
-        component: () => import('../views/contacts/Form.vue'),
+        redirect: to => ({ path: '/crm/contacts', query: { edit: to.params.id } }),
+    },
+    {
+        path: '/crm/companies',
+        name: 'crm.companies',
+        component: () => import('../views/companies/Index.vue'),
+        meta: { auth: true },
+    },
+    {
+        path: '/crm/companies/:id',
+        name: 'crm.companies.show',
+        component: () => import('../views/companies/Show.vue'),
         meta: { auth: true },
     },
     {
@@ -51,6 +57,12 @@ const routes = [
         path: '/crm/tasks',
         name: 'crm.tasks',
         component: () => import('../views/tasks/Index.vue'),
+        meta: { auth: true },
+    },
+    {
+        path: '/crm/tasks/calendar',
+        name: 'crm.tasks.calendar',
+        component: () => import('../views/tasks/Calendar.vue'),
         meta: { auth: true },
     },
     {
@@ -87,6 +99,42 @@ const routes = [
         path: '/crm/settings/team',
         name: 'crm.settings.team',
         component: () => import('../views/settings/Team.vue'),
+        meta: { auth: true },
+    },
+    {
+        path: '/crm/settings/profile',
+        name: 'crm.settings.profile',
+        component: () => import('../views/settings/Profile.vue'),
+        meta: { auth: true },
+    },
+    {
+        path: '/crm/settings/stages',
+        name: 'crm.settings.stages',
+        component: () => import('../views/settings/Stages.vue'),
+        meta: { auth: true },
+    },
+    {
+        path: '/crm/meetings',
+        name: 'crm.meetings',
+        component: () => import('../views/meetings/Index.vue'),
+        meta: { auth: true },
+    },
+    {
+        path: '/crm/calls',
+        name: 'crm.calls',
+        component: () => import('../views/calls/Index.vue'),
+        meta: { auth: true },
+    },
+    {
+        path: '/crm/products',
+        name: 'crm.products',
+        component: () => import('../views/products/Index.vue'),
+        meta: { auth: true },
+    },
+    {
+        path: '/crm/notifications',
+        name: 'crm.notifications',
+        component: () => import('../views/notifications/Index.vue'),
         meta: { auth: true },
     },
     { path: '/crm/:pathMatch(.*)*', redirect: '/crm/dashboard' },

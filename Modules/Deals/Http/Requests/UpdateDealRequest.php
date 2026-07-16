@@ -21,6 +21,8 @@ class UpdateDealRequest extends FormRequest
             'assigned_to'         => 'nullable|integer|exists:users,id',
             'status'              => 'in:open,won,lost',
             'notes'               => 'nullable|string',
+            'lost_reason'         => 'nullable|string|max:500',
+            'company_id'          => 'nullable|integer|exists:companies,id',
         ];
     }
 }

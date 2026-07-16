@@ -55,6 +55,46 @@ class SettingsController extends Controller
         return ApiResponse::success(UserResource::collection($users));
     }
 
+    public function profile(): JsonResponse
+    {
+        $user = Auth::guard('tenant_api')->user();
+
+        return ApiResponse::success(new UserResource($user));
+    }
+
+    public function updateProfile(Request $request): JsonResponse
+    {
+        $user = Auth::guard('tenant_api')->user();
+
+        $data = $request->validate([
+            'name'  => 'required|string|max:100',
+            'phone' => 'nullable|string|max:30',
+            'title' => 'nullable|string|max:100',
+        ]);
+
+        $user->update($data);
+
+        return ApiResponse::success(new UserResource($user), __('crm.updated'));
+    }
+
+    public function updatePassword(Request $request): JsonResponse
+    {
+        $user = Auth::guard('tenant_api')->user();
+
+        $request->validate([
+            'current_password' => 'required|string',
+            'password'         => 'required|string|min:8|confirmed',
+        ]);
+
+        if (! Hash::check($request->current_password, $user->password)) {
+            return ApiResponse::error(__('crm.invalid_current_password'), 422);
+        }
+
+        $user->update(['password' => Hash::make($request->password)]);
+
+        return ApiResponse::success(null, __('crm.password_updated'));
+    }
+
     public function inviteUser(Request $request): JsonResponse
     {
         $authUser = Auth::guard('tenant_api')->user();

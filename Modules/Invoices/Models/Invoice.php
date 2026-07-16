@@ -39,8 +39,23 @@ class Invoice extends Model
         return $this->hasMany(InvoiceItem::class);
     }
 
+    public function payments(): HasMany
+    {
+        return $this->hasMany(InvoicePayment::class);
+    }
+
     public function tenant(): BelongsTo
     {
         return $this->belongsTo(\Modules\CrmAuth\Models\Tenant::class);
+    }
+
+    public function getPaidAmountAttribute(): float
+    {
+        return (float) $this->payments()->sum('amount');
+    }
+
+    public function getBalanceDueAttribute(): float
+    {
+        return round($this->total - $this->paid_amount, 2);
     }
 }

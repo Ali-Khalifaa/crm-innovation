@@ -18,7 +18,10 @@ class UpdateContactRequest extends FormRequest
             'company'    => 'nullable|string|max:150',
             'address'    => 'nullable|string',
             'notes'      => 'nullable|string',
-            'status'     => 'in:lead,customer,inactive',
+            'status'      => 'in:lead,customer,inactive',
+            'lead_source' => 'nullable|in:website,referral,social,cold,event,other',
+            'owner_id'    => 'nullable|integer|exists:users,id',
+            'company_id'  => 'nullable|integer|exists:companies,id',
         ];
     }
 }

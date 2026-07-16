@@ -1,5 +1,7 @@
 import { createApp } from 'vue'
 import { i18nVue } from 'laravel-vue-i18n'
+import PrimeVue from 'primevue/config'
+import Aura from '@primevue/themes/aura'
 import App from './App.vue'
 import router from './router/index.js'
 import store from './store/index.js'
@@ -29,6 +31,16 @@ const translations = {
 const app = createApp(App)
 app.use(store)
 app.use(router)
+app.use(PrimeVue, {
+  theme: {
+    preset: Aura,
+    options: {
+      darkModeSelector: '[data-bs-theme="dark"]',
+      cssLayer: false,
+    },
+  },
+  ripple: false,
+})
 
 app.use(i18nVue, {
     lang: localStorage.getItem('crm_locale') || 'en',

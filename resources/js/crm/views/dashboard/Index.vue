@@ -2,51 +2,102 @@
   <CrmLayout>
 
     <!-- KPI Stats Row -->
-    <div class="row mb-md-4 mb-3">
-      <div class="col-md-12">
-        <div class="card card-border mb-0">
-          <div class="card-header card-header-action">
-            <h6>{{ t('dashboard.crm_overview') }}</h6>
-            <div class="card-action-wrap">
-              <span class="text-muted fs-7">{{ today }}</span>
-            </div>
+    <div class="row g-3 mb-4">
+      <!-- Contacts -->
+      <div class="col-6 col-xl-2">
+        <div class="kpi-card">
+          <div class="kpi-icon" style="background:rgba(37,99,235,.1);color:#2563EB">
+            <i class="bi bi-people fs-5"></i>
           </div>
-          <div class="card-body">
-            <div v-if="loading" class="d-flex justify-content-center py-4">
-              <div class="spinner-border text-primary" role="status"></div>
+          <div class="kpi-body">
+            <div class="kpi-value">
+              <span v-if="loading" class="placeholder-glow"><span class="placeholder" style="width:40px"></span></span>
+              <span v-else>{{ stats.total_contacts ?? 0 }}</span>
             </div>
-            <template v-else>
-              <div class="row">
-                <div class="col-xxl-3 col-sm-6 mb-xxl-0 mb-3">
-                  <span class="d-block fw-medium fs-7">{{ t('dashboard.total_contacts') }}</span>
-                  <div class="d-flex align-items-center gap-2">
-                    <span class="d-block fs-4 fw-medium text-dark mb-0">{{ stats.total_contacts ?? 0 }}</span>
-                    <span class="badge badge-sm badge-soft-success"><i class="bi bi-people"></i></span>
-                  </div>
-                </div>
-                <div class="col-xxl-3 col-sm-6 mb-xxl-0 mb-3">
-                  <span class="d-block fw-medium fs-7">{{ t('dashboard.total_deals') }}</span>
-                  <div class="d-flex align-items-center gap-2">
-                    <span class="d-block fs-4 fw-medium text-dark mb-0">{{ stats.total_deals ?? 0 }}</span>
-                    <span class="badge badge-sm badge-soft-primary">{{ t('dashboard.open') }}</span>
-                  </div>
-                </div>
-                <div class="col-xxl-3 col-sm-6 mb-xxl-0 mb-3">
-                  <span class="d-block fw-medium fs-7">{{ t('dashboard.pipeline_value') }}</span>
-                  <div class="d-flex align-items-center gap-2">
-                    <span class="d-block fs-4 fw-medium text-dark mb-0">${{ formatNum(stats.open_deals_value) }}</span>
-                    <span class="badge badge-sm badge-soft-warning"><i class="bi bi-arrow-up"></i></span>
-                  </div>
-                </div>
-                <div class="col-xxl-3 col-sm-6">
-                  <span class="d-block fw-medium fs-7">{{ t('dashboard.win_rate') }}</span>
-                  <div class="d-flex align-items-center gap-2">
-                    <span class="d-block fs-4 fw-medium text-dark mb-0">{{ stats.win_rate ?? 0 }}%</span>
-                    <span class="badge badge-sm badge-soft-success"><i class="bi bi-arrow-up"></i> {{ t('dashboard.won') }}</span>
-                  </div>
-                </div>
-              </div>
-            </template>
+            <div class="kpi-label">{{ t('dashboard.total_contacts') }}</div>
+            <div class="kpi-sub">+{{ stats.new_contacts_this_month ?? 0 }} {{ locale==='ar'?'هذا الشهر':'this month' }}</div>
+          </div>
+        </div>
+      </div>
+      <!-- Companies -->
+      <div class="col-6 col-xl-2">
+        <div class="kpi-card">
+          <div class="kpi-icon" style="background:rgba(124,58,237,.1);color:#7C3AED">
+            <i class="bi bi-building fs-5"></i>
+          </div>
+          <div class="kpi-body">
+            <div class="kpi-value">
+              <span v-if="loading" class="placeholder-glow"><span class="placeholder" style="width:40px"></span></span>
+              <span v-else>{{ stats.total_companies ?? 0 }}</span>
+            </div>
+            <div class="kpi-label">{{ locale==='ar'?'الشركات':'Companies' }}</div>
+            <div class="kpi-sub">{{ locale==='ar'?'شركة مسجّلة':'registered' }}</div>
+          </div>
+        </div>
+      </div>
+      <!-- Pipeline -->
+      <div class="col-6 col-xl-2">
+        <div class="kpi-card">
+          <div class="kpi-icon" style="background:rgba(245,158,11,.1);color:#D97706">
+            <i class="bi bi-graph-up-arrow fs-5"></i>
+          </div>
+          <div class="kpi-body">
+            <div class="kpi-value">
+              <span v-if="loading" class="placeholder-glow"><span class="placeholder" style="width:60px"></span></span>
+              <span v-else>${{ formatNum(stats.open_deals_value) }}</span>
+            </div>
+            <div class="kpi-label">{{ t('dashboard.pipeline_value') }}</div>
+            <div class="kpi-sub">{{ stats.total_deals ?? 0 }} {{ locale==='ar'?'صفقة':'deals total' }}</div>
+          </div>
+        </div>
+      </div>
+      <!-- Won Deals -->
+      <div class="col-6 col-xl-2">
+        <div class="kpi-card">
+          <div class="kpi-icon" style="background:rgba(16,185,129,.1);color:#059669">
+            <i class="bi bi-trophy fs-5"></i>
+          </div>
+          <div class="kpi-body">
+            <div class="kpi-value">
+              <span v-if="loading" class="placeholder-glow"><span class="placeholder" style="width:40px"></span></span>
+              <span v-else>{{ stats.won_deals ?? 0 }}</span>
+            </div>
+            <div class="kpi-label">{{ locale==='ar'?'صفقات مكسوبة':'Won Deals' }}</div>
+            <div class="kpi-sub kpi-sub-success">{{ stats.win_rate ?? 0 }}% {{ locale==='ar'?'معدل الفوز':'win rate' }}</div>
+          </div>
+        </div>
+      </div>
+      <!-- Lost Deals -->
+      <div class="col-6 col-xl-2">
+        <div class="kpi-card">
+          <div class="kpi-icon" style="background:rgba(239,68,68,.1);color:#EF4444">
+            <i class="bi bi-x-circle fs-5"></i>
+          </div>
+          <div class="kpi-body">
+            <div class="kpi-value">
+              <span v-if="loading" class="placeholder-glow"><span class="placeholder" style="width:40px"></span></span>
+              <span v-else>{{ stats.lost_deals ?? 0 }}</span>
+            </div>
+            <div class="kpi-label">{{ locale==='ar'?'صفقات خاسرة':'Lost Deals' }}</div>
+            <div class="kpi-sub kpi-sub-danger">{{ locale==='ar'?'مغلقة بخسارة':'closed lost' }}</div>
+          </div>
+        </div>
+      </div>
+      <!-- Overdue Invoices -->
+      <div class="col-6 col-xl-2">
+        <div class="kpi-card" :class="{ 'kpi-card-alert': stats.overdue_invoices > 0 }">
+          <div class="kpi-icon" :style="stats.overdue_invoices > 0 ? 'background:rgba(239,68,68,.1);color:#EF4444' : 'background:rgba(100,116,139,.1);color:#64748B'">
+            <i class="bi bi-receipt-cutoff fs-5"></i>
+          </div>
+          <div class="kpi-body">
+            <div class="kpi-value">
+              <span v-if="loading" class="placeholder-glow"><span class="placeholder" style="width:40px"></span></span>
+              <span v-else :class="{ 'text-danger': stats.overdue_invoices > 0 }">{{ stats.overdue_invoices ?? 0 }}</span>
+            </div>
+            <div class="kpi-label">{{ locale==='ar'?'فواتير متأخرة':'Overdue Invoices' }}</div>
+            <div class="kpi-sub" :class="stats.overdue_invoices > 0 ? 'kpi-sub-danger' : ''">
+              {{ stats.overdue_invoices > 0 ? (locale==='ar'?'تحتاج اهتمام':'need attention') : (locale==='ar'?'لا متأخرات':'no overdue') }}
+            </div>
           </div>
         </div>
       </div>
@@ -297,3 +348,35 @@ function billingLabel(b) {
   return map[b] || b
 }
 </script>
+
+<style scoped>
+/* ─── KPI Cards ──────────────────────────────────────────────────────────── */
+.kpi-card {
+  background: var(--bs-body-bg, #fff);
+  border: 1px solid var(--bs-border-color, #E2E8F0);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  height: 100%;
+  transition: box-shadow 0.2s, border-color 0.2s;
+}
+.kpi-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.06); }
+.kpi-card-alert { border-color: rgba(239,68,68,.3); }
+.kpi-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.kpi-body { flex: 1; min-width: 0; }
+.kpi-value { font-size: 1.5rem; font-weight: 700; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.kpi-label { font-size: 11.5px; font-weight: 600; color: var(--bs-secondary-color, #64748B); margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.kpi-sub { font-size: 11px; color: var(--bs-secondary-color, #9CA3AF); margin-top: 2px; }
+.kpi-sub-success { color: #059669; }
+.kpi-sub-danger  { color: #EF4444; }
+</style>

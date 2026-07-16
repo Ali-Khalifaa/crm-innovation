@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Modules\Companies\Models\Company;
 use Modules\Contacts\Models\Contact;
 use Modules\Core\Helpers\ApiResponse;
 use Modules\Deals\Models\Deal;
@@ -52,16 +53,34 @@ class ReportController extends Controller
             ->whereYear('created_at', now()->year)
             ->count();
 
+        $lostDeals = Deal::withoutGlobalScope('tenant')
+            ->where('tenant_id', $tenantId)
+            ->where('status', 'lost')->count();
+
+        $totalCompanies = Company::withoutGlobalScope('tenant')
+            ->where('tenant_id', $tenantId)->count();
+
+        $contactsBySource = Contact::withoutGlobalScope('tenant')
+            ->where('tenant_id', $tenantId)
+            ->whereNotNull('lead_source')
+            ->select('lead_source', DB::raw('COUNT(*) as count'))
+            ->groupBy('lead_source')
+            ->orderByDesc('count')
+            ->get();
+
         return ApiResponse::success([
-            'total_contacts'        => $totalContacts,
-            'total_deals'           => $totalDeals,
-            'won_deals'             => $wonDeals,
-            'win_rate'              => $totalDeals > 0 ? round($wonDeals / $totalDeals * 100, 1) : 0,
-            'total_revenue'         => $totalRevenue,
-            'open_deals_value'      => $openDealsValue,
-            'pending_tasks'         => $pendingTasks,
-            'overdue_invoices'      => $overdueInvoices,
+            'total_contacts'          => $totalContacts,
+            'total_deals'             => $totalDeals,
+            'won_deals'               => $wonDeals,
+            'lost_deals'              => $lostDeals,
+            'win_rate'                => $totalDeals > 0 ? round($wonDeals / $totalDeals * 100, 1) : 0,
+            'total_revenue'           => $totalRevenue,
+            'open_deals_value'        => $openDealsValue,
+            'pending_tasks'           => $pendingTasks,
+            'overdue_invoices'        => $overdueInvoices,
             'new_contacts_this_month' => $newContactsThisMonth,
+            'total_companies'         => $totalCompanies,
+            'contacts_by_source'      => $contactsBySource,
         ]);
     }
 
