@@ -45,6 +45,7 @@ export default {
             commit('SET_TOKEN', null)
             commit('SET_USER', null)
             commit('SET_TENANT', null)
+            window.location.href = '/'
         },
         async fetchMe({ commit }) {
             const { data } = await api.get('/me')

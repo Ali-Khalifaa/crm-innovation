@@ -1,6 +1,5 @@
 <template>
     <div>
-        <!-- Page Header -->
         <div class="d-md-flex d-block align-items-center justify-content-between my-4 page-header-breadcrumb">
             <h1 class="page-title fw-semibold fs-18 mb-0">الإعدادات العامة للموقع</h1>
             <div class="ms-md-1 ms-0">
@@ -14,10 +13,43 @@
 
         <loader v-if="loading" />
 
-        <form @submit.prevent="submit" v-else>
+        <form @submit.prevent="submit" v-else enctype="multipart/form-data">
             <div class="row g-4">
 
-                <!-- Contact Info -->
+                <div class="col-12">
+                    <div class="card custom-card">
+                        <div class="card-header"><h6 class="card-title mb-0"><i class="bx bx-image me-2"></i>الهوية البصرية</h6></div>
+                        <div class="card-body">
+                            <div class="row g-4">
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold">اللوجو (Navbar / Auth)</label>
+                                    <input type="file" class="form-control" accept="image/*" @change="handleFile('logo', $event)" ref="logoInput">
+                                    <div class="mt-2" v-if="displayLogo">
+                                        <img :src="displayLogo" alt="logo" class="img-thumbnail" style="max-height:80px;">
+                                        <button type="button" class="btn btn-sm btn-danger-transparent ms-2" @click="clearFile('logo')">حذف</button>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold">لوجو الفوتر</label>
+                                    <input type="file" class="form-control" accept="image/*" @change="handleFile('logo_footer', $event)" ref="logoFooterInput">
+                                    <div class="mt-2" v-if="displayLogoFooter">
+                                        <img :src="displayLogoFooter" alt="footer logo" class="img-thumbnail" style="max-height:80px;background:#1e293b;">
+                                        <button type="button" class="btn btn-sm btn-danger-transparent ms-2" @click="clearFile('logo_footer')">حذف</button>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold">Favicon</label>
+                                    <input type="file" class="form-control" accept="image/*,.ico" @change="handleFile('favicon', $event)" ref="faviconInput">
+                                    <div class="mt-2" v-if="displayFavicon">
+                                        <img :src="displayFavicon" alt="favicon" class="img-thumbnail" style="max-height:48px;">
+                                        <button type="button" class="btn btn-sm btn-danger-transparent ms-2" @click="clearFile('favicon')">حذف</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="col-12">
                     <div class="card custom-card">
                         <div class="card-header"><h6 class="card-title mb-0"><i class="bx bx-info-circle me-2"></i>معلومات التواصل</h6></div>
@@ -40,139 +72,138 @@
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label fw-semibold">رقم الهاتف</label>
-                                    <input type="text" class="form-control" v-model="form.phone" placeholder="+20 100 000 0000">
+                                    <input type="text" class="form-control" v-model="form.phone">
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label fw-semibold">واتساب</label>
-                                    <input type="text" class="form-control" v-model="form.whatsapp" placeholder="+20 100 000 0000">
+                                    <input type="text" class="form-control" v-model="form.whatsapp">
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label fw-semibold">العنوان (إنجليزي)</label>
-                                    <input type="text" class="form-control" v-model="form.address_en" placeholder="Cairo, Egypt">
+                                    <input type="text" class="form-control" v-model="form.address_en">
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label fw-semibold">العنوان (عربي)</label>
-                                    <input type="text" class="form-control" v-model="form.address_ar" placeholder="القاهرة، مصر">
+                                    <input type="text" class="form-control" v-model="form.address_ar">
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Social Media -->
                 <div class="col-12">
                     <div class="card custom-card">
                         <div class="card-header"><h6 class="card-title mb-0"><i class="bx bx-share-alt me-2"></i>روابط السوشيال ميديا</h6></div>
                         <div class="card-body">
                             <div class="row g-3">
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold"><i class="bx bxl-facebook text-primary me-1"></i>فيسبوك</label>
-                                    <input type="url" class="form-control" v-model="form.facebook" placeholder="https://facebook.com/...">
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold"><i class="bx bxl-twitter text-info me-1"></i>تويتر / X</label>
-                                    <input type="url" class="form-control" v-model="form.twitter" placeholder="https://twitter.com/...">
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold"><i class="bx bxl-linkedin text-primary me-1"></i>لينكد إن</label>
-                                    <input type="url" class="form-control" v-model="form.linkedin" placeholder="https://linkedin.com/...">
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold"><i class="bx bxl-instagram text-danger me-1"></i>انستجرام</label>
-                                    <input type="url" class="form-control" v-model="form.instagram" placeholder="https://instagram.com/...">
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold"><i class="bx bxl-youtube text-danger me-1"></i>يوتيوب</label>
-                                    <input type="url" class="form-control" v-model="form.youtube" placeholder="https://youtube.com/...">
-                                </div>
+                                <div class="col-md-6"><label class="form-label fw-semibold">فيسبوك</label><input type="url" class="form-control" v-model="form.facebook"></div>
+                                <div class="col-md-6"><label class="form-label fw-semibold">تويتر / X</label><input type="url" class="form-control" v-model="form.twitter"></div>
+                                <div class="col-md-6"><label class="form-label fw-semibold">لينكد إن</label><input type="url" class="form-control" v-model="form.linkedin"></div>
+                                <div class="col-md-6"><label class="form-label fw-semibold">انستجرام</label><input type="url" class="form-control" v-model="form.instagram"></div>
+                                <div class="col-md-6"><label class="form-label fw-semibold">يوتيوب</label><input type="url" class="form-control" v-model="form.youtube"></div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- SEO -->
-                <div class="col-12">
-                    <div class="card custom-card">
-                        <div class="card-header"><h6 class="card-title mb-0"><i class="bx bx-search-alt me-2"></i>إعدادات SEO</h6></div>
-                        <div class="card-body">
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold">عنوان الصفحة (إنجليزي)</label>
-                                    <input type="text" class="form-control" v-model="form.meta_title_en" placeholder="CRM Innovation — Smart CRM">
-                                    <small class="text-muted">{{ (form.meta_title_en || '').length }}/160</small>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold">عنوان الصفحة (عربي)</label>
-                                    <input type="text" class="form-control" v-model="form.meta_title_ar" placeholder="CRM إنوفيشن">
-                                    <small class="text-muted">{{ (form.meta_title_ar || '').length }}/160</small>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold">وصف الصفحة (إنجليزي)</label>
-                                    <textarea class="form-control" v-model="form.meta_description_en" rows="3" placeholder="Manage contacts, track deals..."></textarea>
-                                    <small class="text-muted">{{ (form.meta_description_en || '').length }}/320</small>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold">وصف الصفحة (عربي)</label>
-                                    <textarea class="form-control" v-model="form.meta_description_ar" rows="3" placeholder="أدر جهات الاتصال..."></textarea>
-                                    <small class="text-muted">{{ (form.meta_description_ar || '').length }}/320</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Submit -->
-                <div class="col-12">
+                <div class="col-12" v-if="permission.includes('landing settings edit')">
                     <button type="submit" class="btn btn-primary px-5" :disabled="saving">
                         <span v-if="saving"><i class="ri-loader-2-fill me-1"></i>جاري الحفظ...</span>
                         <span v-else><i class="ri-save-line me-1"></i>حفظ الإعدادات</span>
                     </button>
                 </div>
-
             </div>
         </form>
     </div>
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
+import { useStore } from 'vuex';
 import adminApi from '../../../../api/adminAxios';
 
 export default {
     name: 'LandingSettings',
     setup() {
+        const store = useStore();
+        const permission = computed(() => store.state.authAdmin.permission);
         const loading = ref(true);
         const saving  = ref(false);
         const errors  = ref({});
-        const form    = ref({
+        const logoInput = ref(null);
+        const logoFooterInput = ref(null);
+        const faviconInput = ref(null);
+        const files = ref({ logo: null, logo_footer: null, favicon: null });
+        const previews = ref({ logo: null, logo_footer: null, favicon: null });
+        const form = ref({
             site_name_en: '', site_name_ar: '',
             email: '', phone: '', whatsapp: '',
             address_en: '', address_ar: '',
             facebook: '', twitter: '', linkedin: '', instagram: '', youtube: '',
-            meta_title_en: '', meta_title_ar: '',
-            meta_description_en: '', meta_description_ar: '',
+            current_logo: null, current_logo_footer: null, current_favicon: null,
         });
+
+        const displayLogo = computed(() => previews.value.logo || form.value.current_logo);
+        const displayLogoFooter = computed(() => previews.value.logo_footer || form.value.current_logo_footer);
+        const displayFavicon = computed(() => previews.value.favicon || form.value.current_favicon);
 
         const load = () => {
             loading.value = true;
             adminApi.get('dashboard/landing/settings')
-                .then(res => { Object.assign(form.value, res.data.data); })
+                .then(res => {
+                    const d = res.data.data;
+                    form.value = {
+                        site_name_en: d.site_name_en || '', site_name_ar: d.site_name_ar || '',
+                        email: d.email || '', phone: d.phone || '', whatsapp: d.whatsapp || '',
+                        address_en: d.address_en || '', address_ar: d.address_ar || '',
+                        facebook: d.facebook || '', twitter: d.twitter || '',
+                        linkedin: d.linkedin || '', instagram: d.instagram || '', youtube: d.youtube || '',
+                        current_logo: d.logo || null, current_logo_footer: d.logo_footer || null, current_favicon: d.favicon || null,
+                    };
+                })
                 .finally(() => { loading.value = false; });
+        };
+
+        const handleFile = (field, e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            files.value[field] = file;
+            previews.value[field] = URL.createObjectURL(file);
+        };
+
+        const clearFile = (field) => {
+            files.value[field] = null;
+            previews.value[field] = null;
+            form.value[`current_${field}`] = null;
+            const inputMap = { logo: logoInput, logo_footer: logoFooterInput, favicon: faviconInput };
+            if (inputMap[field]?.value) inputMap[field].value.value = '';
         };
 
         const submit = () => {
             saving.value = true;
             errors.value = {};
-            adminApi.put('dashboard/landing/settings', form.value)
-                .then(() => {
-                    Swal.fire({ icon: 'success', title: 'تم الحفظ بنجاح', showConfirmButton: false, timer: 1500 });
-                })
+            const fd = new FormData();
+            ['site_name_en','site_name_ar','email','phone','whatsapp','address_en','address_ar','facebook','twitter','linkedin','instagram','youtube'].forEach(k => {
+                fd.append(k, form.value[k] ?? '');
+            });
+            ['logo','logo_footer','favicon'].forEach(k => {
+                if (files.value[k]) fd.append(k, files.value[k]);
+            });
+            fd.append('_method', 'PUT');
+
+            adminApi.post('dashboard/landing/settings', fd)
+                .then(() => Swal.fire({ icon: 'success', title: 'تم الحفظ بنجاح', showConfirmButton: false, timer: 1500 }))
                 .catch(err => { if (err.response?.data?.errors) errors.value = err.response.data.errors; })
-                .finally(() => { saving.value = false; });
+                .finally(() => { saving.value = false; load(); });
         };
 
         onMounted(load);
-        return { loading, saving, errors, form, submit };
+        return {
+            permission, loading, saving, errors, form, submit,
+            logoInput, logoFooterInput, faviconInput,
+            displayLogo, displayLogoFooter, displayFavicon,
+            handleFile, clearFile,
+        };
     }
 };
 </script>

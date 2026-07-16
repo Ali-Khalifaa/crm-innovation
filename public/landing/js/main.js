@@ -45,13 +45,11 @@
         });
 
         /*--------------------------------------------------
-            select onput
+            select input
         ---------------------------------------------------*/
-        if ($('.single-select').length){
+        if ($.fn.niceSelect && $('.single-select').length) {
             $('.single-select').niceSelect();
         }
-
-        $("select").niceSelect();
 
         /*--------------------------------------------
             Search Popup

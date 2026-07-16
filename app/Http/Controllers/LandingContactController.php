@@ -12,11 +12,18 @@ class LandingContactController extends Controller
             'name'       => $request->name,
             'email'      => $request->email,
             'phone'      => $request->phone,
-            'subject'    => $request->subject,
+            'subject'    => __('crm.contact_default_subject'),
             'message'    => $request->message,
             'ip_address' => $request->ip(),
         ]);
 
-        return back()->with('contact_success', true);
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => __('crm.contact_success'),
+            ]);
+        }
+
+        return back()->with('contact_success', true)->withFragment('contact');
     }
 }

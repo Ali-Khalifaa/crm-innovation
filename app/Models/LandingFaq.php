@@ -2,18 +2,20 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class LandingFaq extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
-        'question_en', 'question_ar',
-        'answer_en', 'answer_ar',
-        'sort_order', 'is_active',
+        'question',
+        'answer',
+        'sort_order',
+        'is_active',
     ];
 
-    protected $casts = ['is_active' => 'boolean'];
+    protected $casts = [
+        'question'  => 'array',
+        'answer'    => 'array',
+        'is_active' => 'boolean',
+    ];
 }

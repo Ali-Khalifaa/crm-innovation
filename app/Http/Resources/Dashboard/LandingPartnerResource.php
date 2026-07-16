@@ -11,8 +11,8 @@ class LandingPartnerResource extends JsonResource
         return [
             'id'         => $this->id,
             'name'       => $this->name,
-            'image'      => $this->image ? asset('upload/general/' . $this->image) : null,
-            'image_path' => $this->image,
+            'image'      => upload_general_url($this->image),
+            'image_path' => upload_general_basename($this->image),
             'url'        => $this->url,
             'sort_order' => $this->sort_order,
             'is_active'  => $this->is_active,

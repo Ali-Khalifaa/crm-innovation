@@ -1,163 +1,100 @@
-@extends('landing.layout')
-
-@section('title', app()->getLocale() === 'ar'
-    ? 'إنشاء حساب — CRM Innovation'
-    : 'Register — CRM Innovation')
-@section('body-class', '')
+@extends('landing.layouts.Auth.master')
 
 @section('content')
-
-<div style="background:#F8FAFC;min-height:calc(100vh - 80px);padding:60px 0;">
+@php
+    $defaultPlan = $defaultPlan ?? ($plans->firstWhere('is_featured', true) ?? $plans->first());
+@endphp
+<section class="auth-area">
     <div class="container">
-        <div class="crm-auth-card wow animated fadeInUp" data-wow-duration="0.6s">
-            <div class="text-center mb-4">
-                <img src="{{ asset('images/logo.png') }}" alt="CRM Innovation" style="max-height:50px;margin-bottom:16px;">
-                <h3 style="font-weight:700;color:#1E293B;">{{ __('crm.register_title') }}</h3>
-                <p class="text-muted">{{ __('crm.register_subtitle') }}</p>
-            </div>
-
-            <div id="alert-box" class="alert d-none mb-3" role="alert"></div>
-
-            <form id="register-form">
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">
-                        {{ __('crm.register_company_label') }} <span class="text-danger">*</span>
-                    </label>
-                    <input type="text" class="form-control" id="company_name"
-                        placeholder="{{ app()->getLocale() === 'ar' ? 'اسم شركتك' : 'Your company name' }}"
-                        required>
+       <div class="auth-wrap wow animated fadeInUp" data-wow-duration="0.8s">
+          <div class="auth-brand">
+             <a href="{{ route('landing') }}" class="auth-brand-logo">
+                <img src="{{ $landingLogo }}" alt="{{ $landingSiteName }}">
+             </a>
+             <span class="auth-trial-badge"><i class="fa fa-gift me-2"></i>{{ __('crm.register_trial_badge') }}</span>
+             <h3>{{ __('crm.register_brand_title') }}</h3>
+             <p>{{ __('crm.register_brand_desc') }}</p>
+             <ul class="auth-benefits">
+                <li><i class="fas fa-check"></i> {{ __('crm.register_benefit_fast') }}</li>
+                <li><i class="fas fa-check"></i> {{ __('crm.register_benefit_arabic') }}</li>
+                <li><i class="fas fa-check"></i> {{ __('crm.register_benefit_cancel') }}</li>
+             </ul>
+          </div>
+          <div class="auth-form-side">
+             <h2>{{ __('crm.register_title') }}</h2>
+             <p class="auth-subtitle">{{ __('crm.register_form_subtitle') }}</p>
+             <form id="landing-register-form"
+                action="{{ url('/api/crm/register') }}"
+                method="post"
+                class="auth-ajax-form"
+                data-auth-type="register"
+                data-redirect="{{ url('/crm/dashboard') }}"
+                data-loading="{{ __('crm.register_creating') }}"
+                data-network-error="{{ __('crm.register_network_error') }}">
+                <div class="single-input-inner style-border">
+                   <input type="text" name="name" placeholder="{{ __('crm.register_name_label') }}" required maxlength="150">
                 </div>
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">
-                        {{ __('crm.register_email_label') }} <span class="text-danger">*</span>
-                    </label>
-                    <input type="email" class="form-control" id="email"
-                        placeholder="you@company.com" required>
+                <div class="auth-field-error" data-for="name"></div>
+                <div class="single-input-inner style-border">
+                   <input type="text" name="company_name" placeholder="{{ __('crm.register_company_label') }}" required maxlength="150">
                 </div>
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">
-                        {{ __('crm.register_password_label') }} <span class="text-danger">*</span>
-                    </label>
-                    <input type="password" class="form-control" id="password"
-                        placeholder="{{ __('crm.register_password_hint') }}" required>
+                <div class="auth-field-error" data-for="company_name"></div>
+                <div class="single-input-inner style-border">
+                   <input type="email" name="email" placeholder="{{ __('crm.register_email_label') }}" required autocomplete="email" maxlength="150">
                 </div>
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">
-                        {{ __('crm.register_confirm_label') }} <span class="text-danger">*</span>
-                    </label>
-                    <input type="password" class="form-control" id="password_confirmation"
-                        placeholder="{{ app()->getLocale() === 'ar' ? 'أعد كتابة كلمة المرور' : 'Repeat password' }}"
-                        required>
+                <div class="auth-field-error" data-for="email"></div>
+                <div class="single-input-inner style-border">
+                   <input type="tel" name="phone" placeholder="{{ __('crm.register_phone_label') }}" maxlength="30">
                 </div>
-                <div class="mb-4">
-                    <label class="form-label fw-semibold">
-                        {{ __('crm.register_plan_label') }} <span class="text-danger">*</span>
-                    </label>
-                    <select class="form-control" id="plan_id" required>
-                        @foreach($plans as $plan)
-                        <option value="{{ $plan->id }}"
-                            {{ request('plan') == $plan->id
-                                ? 'selected'
-                                : ($plan->is_featured && !request('plan') ? 'selected' : '') }}>
-                            {{ $plan->name }} — ${{ number_format($plan->monthly_price, 0) }}{{ __('crm.pricing_per_month') }}
-                        </option>
-                        @endforeach
-                    </select>
+                <div class="auth-field-error" data-for="phone"></div>
+                <label class="auth-field-label">{{ __('crm.register_plan_label') }}</label>
+                <div class="auth-plan-options">
+                   @foreach($plans as $plan)
+                   <label class="auth-plan-option">
+                      <input type="radio" name="plan_id" value="{{ $plan->id }}" @checked($defaultPlan && $defaultPlan->id === $plan->id) required>
+                      <span class="auth-plan-card">
+                         <strong>{{ $plan->name }}</strong>
+                         <small>${{ number_format($plan->monthly_price, 0) }}/{{ __('crm.register_monthly') }}</small>
+                      </span>
+                   </label>
+                   @endforeach
                 </div>
-                <div class="mb-4">
-                    <label class="form-label fw-semibold">{{ __('crm.register_billing_label') }}</label>
-                    <div class="d-flex gap-3">
-                        <label class="d-flex align-items-center gap-2" style="cursor:pointer;">
-                            <input type="radio" name="billing_cycle" value="monthly" checked>
-                            {{ __('crm.register_monthly') }}
-                        </label>
-                        <label class="d-flex align-items-center gap-2" style="cursor:pointer;">
-                            <input type="radio" name="billing_cycle" value="yearly">
-                            {{ __('crm.register_yearly') }}
-                            <span class="badge bg-success ms-1">{{ __('crm.register_save_20') }}</span>
-                        </label>
-                    </div>
+                <div class="auth-field-error" data-for="plan_id"></div>
+                <label class="auth-field-label">{{ __('crm.register_billing_label') }}</label>
+                <div class="auth-billing-options">
+                   <label class="auth-billing-option">
+                      <input type="radio" name="billing_cycle" value="monthly" checked>
+                      <span>{{ __('crm.register_monthly') }}</span>
+                   </label>
+                   <label class="auth-billing-option">
+                      <input type="radio" name="billing_cycle" value="yearly">
+                      <span>{{ __('crm.register_yearly') }}</span>
+                   </label>
                 </div>
-                <button type="submit" class="btn btn-base" id="submit-btn">
-                    <span id="btn-text">{{ __('crm.register_btn') }}</span>
-                    <span id="btn-spinner" class="d-none spinner-border spinner-border-sm ms-2"></span>
-                </button>
-            </form>
-
-            <hr class="my-4">
-            <p class="text-center text-muted mb-0" style="font-size:14px;">
-                {{ __('crm.register_have_account') }}
-                <a href="{{ route('login') }}" style="color:var(--crm-primary);font-weight:600;">
-                    {{ __('crm.register_sign_in_link') }}
-                </a>
-            </p>
-        </div>
+                <div class="auth-field-error" data-for="billing_cycle"></div>
+                <div class="single-input-inner style-border password-field">
+                   <button type="button" class="password-toggle" aria-label="{{ __('crm.login_show_password') }}">
+                      <i class="far fa-eye"></i>
+                   </button>
+                   <input type="password" name="password" placeholder="{{ __('crm.register_password_label') }}" required autocomplete="new-password" minlength="8">
+                </div>
+                <div class="auth-field-error" data-for="password"></div>
+                <div class="single-input-inner style-border password-field">
+                   <button type="button" class="password-toggle" aria-label="{{ __('crm.register_show_password_confirm') }}">
+                      <i class="far fa-eye"></i>
+                   </button>
+                   <input type="password" name="password_confirmation" placeholder="{{ __('crm.register_confirm_label') }}" required autocomplete="new-password" minlength="8">
+                </div>
+                <div class="auth-field-error" data-for="password_confirmation"></div>
+                <label class="auth-terms">
+                   <input type="checkbox" name="terms" required>
+                   <span>{{ __('crm.register_terms_prefix') }} <a href="{{ route('landing.terms') }}">{{ __('crm.footer_terms_link') }}</a> {{ __('crm.register_terms_and') }} <a href="{{ route('landing.privacy') }}">{{ __('crm.footer_privacy_link') }}</a></span>
+                </label>
+                <button type="submit" class="btn btn-base w-100 border-radius-5 auth-submit-btn">{{ __('crm.register_btn') }}</button>
+             </form>
+             <p class="auth-switch">{{ __('crm.register_have_account') }} <a href="{{ route('login') }}">{{ __('crm.register_sign_in_link') }}</a></p>
+          </div>
+       </div>
     </div>
-</div>
-
-@endsection
-
-@section('scripts')
-<script>
-const _registerBtnText  = @json(__('crm.register_btn'));
-const _registerCreating = @json(__('crm.register_creating'));
-const _errNetwork       = @json(app()->getLocale() === 'ar' ? 'خطأ في الشبكة. تحقق من اتصالك.' : 'Network error. Check your connection.');
-
-document.getElementById('register-form').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    const btn      = document.getElementById('submit-btn');
-    const btnText  = document.getElementById('btn-text');
-    const spinner  = document.getElementById('btn-spinner');
-    const alertBox = document.getElementById('alert-box');
-
-    btn.disabled = true;
-    btnText.textContent = _registerCreating;
-    spinner.classList.remove('d-none');
-    alertBox.classList.add('d-none');
-
-    const payload = {
-        company_name:          document.getElementById('company_name').value,
-        email:                 document.getElementById('email').value,
-        password:              document.getElementById('password').value,
-        password_confirmation: document.getElementById('password_confirmation').value,
-        plan_id:               parseInt(document.getElementById('plan_id').value),
-        billing_cycle:         document.querySelector('input[name="billing_cycle"]:checked').value,
-    };
-
-    try {
-        const res = await fetch('/api/crm/register', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-            body: JSON.stringify(payload),
-        });
-
-        const text  = await res.text();
-        const clean = text.replace(/^﻿+/, '');
-        let data;
-        try { data = JSON.parse(clean); }
-        catch (e) { throw new Error('Server error (HTTP ' + res.status + ')'); }
-
-        if (res.ok && data.success) {
-            try { localStorage.setItem('crm_token',  data.data.token); }               catch (e) {}
-            try { localStorage.setItem('crm_user',   JSON.stringify(data.data.user)); }   catch (e) {}
-            try { localStorage.setItem('crm_tenant', JSON.stringify(data.data.tenant)); } catch (e) {}
-            window.location.href = '/crm/dashboard';
-        } else {
-            const msg    = data.message || @json(app()->getLocale() === 'ar' ? 'فشل التسجيل. حاول مرة أخرى.' : 'Registration failed. Please try again.');
-            const errors = data.errors ? Object.values(data.errors).flat().join(' ') : '';
-            alertBox.className   = 'alert alert-danger mb-3';
-            alertBox.textContent = errors || msg;
-            alertBox.classList.remove('d-none');
-        }
-    } catch (err) {
-        alertBox.className   = 'alert alert-danger mb-3';
-        alertBox.textContent = err.message || _errNetwork;
-        alertBox.classList.remove('d-none');
-    } finally {
-        btn.disabled = false;
-        btnText.textContent = _registerBtnText;
-        spinner.classList.add('d-none');
-    }
-});
-</script>
+ </section>
 @endsection

@@ -28,7 +28,7 @@ api.interceptors.response.use(
             store.commit('auth/SET_TOKEN', null)
             store.commit('auth/SET_USER', null)
             store.commit('auth/SET_TENANT', null)
-            window.location.href = '/crm/login'
+            window.location.href = '/'
         }
         if (err.response?.status === 403 && err.response?.data?.message?.includes('plan')) {
             store.commit('ui/SET_PLAN_LIMIT_MODAL', true)
